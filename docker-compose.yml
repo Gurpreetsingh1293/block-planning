@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  # 1. MongoDB Database Container
+  mongo:
+    image: mongo:7.0
+    container_name: sih-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - sih-network
+
+  # 2. Express.js Backend Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sih-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo:27017/sih-block-planning
+      - ML_SERVICE_URL=http://ml-service:8000
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - NODE_ENV=development
+    depends_on:
+      mongo:
+        condition: service_healthy
+      ml-service:
+        condition: service_started
+    volumes:
+      - ./backend/src:/app/src
+    networks:
+      - sih-network
+
+  # 3. Python FastAPI Machine Learning Service
+  ml-service:
+    build:
+      context: ./ml-service
+      dockerfile: Dockerfile
+    container_name: sih-ml-service
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - HOST=0.0.0.0
+    volumes:
+      - ./ml-service:/app
+    networks:
+      - sih-network
+
+networks:
+  sih-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local

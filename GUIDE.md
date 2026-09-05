@@ -42,15 +42,15 @@ Ensure each member has the following installed on their Windows machine:
 Clone or pull the repository, then run the setup in each component folder:
 
 ```powershell
-# 1. Backend Setup
+# 1. Backend Setup (using npm ci to match exact lockfile versions)
 cd backend
 copy .env.example .env
-npm install
+npm ci
 
 # 2. Frontend Setup
 cd ..\frontend
 copy .env.example .env
-npm install
+npm ci
 
 # 3. ML Service Setup
 cd ..\ml-service
@@ -62,6 +62,14 @@ pip install -r requirements.txt
 # Return to root
 cd ..
 ```
+
+> **🐳 The Docker Alternative ("Works on My Machine" Guarantee):**  
+> If anyone has trouble installing Python or MongoDB locally, simply run:  
+> ```powershell
+> docker compose up -d
+> cd frontend && npm run dev
+> ```  
+> This boots MongoDB, the Express Backend, and the FastAPI ML service in containers with zero host installation needed!
 
 ---
 
