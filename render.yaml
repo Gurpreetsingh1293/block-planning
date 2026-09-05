@@ -1,0 +1,32 @@
+services:
+  # Express.js Backend Service
+  - type: web
+    name: sih-block-planning-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: MONGO_URI
+        sync: false
+      - key: ML_SERVICE_URL
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+  # Python FastAPI Machine Learning Service
+  - type: web
+    name: sih-block-planning-ml
+    env: python
+    plan: free
+    rootDir: ml-service
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port 8000
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 8000
