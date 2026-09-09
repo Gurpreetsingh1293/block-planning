@@ -1,0 +1,310 @@
+/* =====================================================
+   Login.css
+   Indian Railways-inspired light theme.
+   Navy blue (primary), white (background), red (accent),
+   orange (action). No dark theme, no gradients.
+   ===================================================== */
+
+:root {
+  --rbp-navy: #0b2545;
+  --rbp-navy-light: #13315c;
+  --rbp-white: #ffffff;
+  --rbp-red: #c8102e;
+  --rbp-orange: #f37021;
+  --rbp-orange-hover: #d95f16;
+  --rbp-gray-border: #dfe3e8;
+  --rbp-gray-bg: #f6f7f9;
+  --rbp-text-muted: #5b6472;
+}
+
+.login-page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  background: var(--rbp-white);
+  overflow-x: hidden;
+}
+
+/* ---------- Left: login panel ---------- */
+
+.login-panel {
+  flex: 1 1 480px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 32px;
+  background: var(--rbp-white);
+}
+
+.login-panel-inner {
+  width: 100%;
+  max-width: 380px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: var(--rbp-navy);
+  color: var(--rbp-white);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+.brand-name {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--rbp-navy);
+}
+
+.login-heading {
+  margin: 0 0 8px;
+  font-size: 26px;
+  line-height: 1.25;
+  font-weight: 700;
+  color: var(--rbp-navy);
+}
+
+.login-subtitle {
+  margin: 0 0 28px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--rbp-text-muted);
+  max-width: 34ch;
+}
+
+/* ---------- Google button ---------- */
+
+.google-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--rbp-gray-border);
+  background: var(--rbp-white);
+  color: var(--rbp-navy);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.google-btn:hover {
+  background: var(--rbp-gray-bg);
+  border-color: #c9ced6;
+}
+
+.google-btn:focus-visible {
+  outline: 2px solid var(--rbp-navy);
+  outline-offset: 2px;
+}
+
+.google-icon {
+  flex-shrink: 0;
+}
+
+/* ---------- Divider ---------- */
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 22px 0;
+  color: var(--rbp-text-muted);
+  font-size: 12px;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--rbp-gray-border);
+}
+
+/* ---------- Form ---------- */
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--rbp-navy);
+}
+
+.field input,
+.field select {
+  padding: 10px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid var(--rbp-gray-border);
+  background: var(--rbp-white);
+  color: var(--rbp-navy);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.field input::placeholder {
+  color: #9aa3ad;
+}
+
+.field input:focus-visible,
+.field select:focus-visible {
+  outline: none;
+  border-color: var(--rbp-navy);
+  box-shadow: 0 0 0 3px rgba(11, 37, 69, 0.12);
+}
+
+.form-error {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: #fdecee;
+  border: 1px solid rgba(200, 16, 46, 0.25);
+  color: var(--rbp-red);
+  font-size: 13px;
+}
+
+.login-btn {
+  margin-top: 4px;
+  padding: 11px 16px;
+  border: none;
+  border-radius: 6px;
+  background: var(--rbp-orange);
+  color: var(--rbp-white);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.05s ease;
+}
+
+.login-btn:hover {
+  background: var(--rbp-orange-hover);
+}
+
+.login-btn:focus-visible {
+  outline: 2px solid var(--rbp-navy);
+  outline-offset: 2px;
+}
+
+.login-btn:active {
+  transform: translateY(1px);
+}
+
+/* ---------- Right: image panel ---------- */
+
+.image-panel {
+  position: relative;
+  flex: 1 1 55%;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--rbp-navy);
+}
+
+.image-panel-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.image-panel-overlay {
+  position: absolute;
+  left: 40px;
+  bottom: 48px;
+  color: var(--rbp-white);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+}
+
+.image-panel-overlay h2 {
+  margin: 0 0 6px;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.image-panel-overlay p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ---------- Entrance animation (subtle, easy to remove) ---------- */
+
+.login-panel-inner {
+  animation: rbp-fade-in 0.4s ease both;
+}
+
+@keyframes rbp-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-panel-inner {
+    animation: none;
+  }
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+  .login-page {
+    flex-direction: column;
+  }
+
+  .image-panel {
+    order: -1;
+    min-height: 240px;
+    flex: none;
+  }
+
+  .login-panel {
+    padding: 36px 24px 48px;
+  }
+
+  .image-panel-overlay {
+    left: 20px;
+    bottom: 20px;
+  }
+
+  .image-panel-overlay h2 {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 420px) {
+  .login-panel-inner {
+    max-width: 100%;
+  }
+}
