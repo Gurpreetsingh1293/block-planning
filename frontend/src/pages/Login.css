@@ -1,8 +1,8 @@
 /* =====================================================
    Login.css
    Indian Railways-inspired light theme.
-   Navy blue (primary), white (background), red (accent),
-   orange (action). No dark theme, no gradients.
+   Navy blue (primary), crisp white (background), red (accent),
+   amber/orange (railway signal/action). Clean, modern, official.
    ===================================================== */
 
 :root {
@@ -10,10 +10,11 @@
   --rbp-navy-light: #13315c;
   --rbp-white: #ffffff;
   --rbp-red: #c8102e;
+  --rbp-green: #107c41;
   --rbp-orange: #f37021;
   --rbp-orange-hover: #d95f16;
   --rbp-gray-border: #dfe3e8;
-  --rbp-gray-bg: #f6f7f9;
+  --rbp-gray-bg: #f4f6f8;
   --rbp-text-muted: #5b6472;
 }
 
@@ -38,34 +39,47 @@
 
 .login-panel-inner {
   width: 100%;
-  max-width: 380px;
+  max-width: 420px;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 32px;
+  gap: 12px;
+  margin-bottom: 28px;
 }
 
 .brand-mark {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 6px;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
   background: var(--rbp-navy);
   color: var(--rbp-white);
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.02em;
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  box-shadow: 0 2px 6px rgba(11, 37, 69, 0.2);
+}
+
+.brand-details {
+  display: flex;
+  flex-direction: column;
 }
 
 .brand-name {
-  font-weight: 600;
-  font-size: 15px;
+  font-weight: 700;
+  font-size: 16px;
   color: var(--rbp-navy);
+  line-height: 1.2;
+}
+
+.brand-subtext {
+  font-size: 12px;
+  color: var(--rbp-text-muted);
+  font-weight: 500;
 }
 
 .login-heading {
@@ -77,14 +91,13 @@
 }
 
 .login-subtitle {
-  margin: 0 0 28px;
-  font-size: 14px;
+  margin: 0 0 22px;
+  font-size: 13.5px;
   line-height: 1.5;
   color: var(--rbp-text-muted);
-  max-width: 34ch;
 }
 
-/* ---------- Google button ---------- */
+/* ---------- Google OAuth button ---------- */
 
 .google-btn {
   width: 100%;
@@ -123,7 +136,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 22px 0;
+  margin: 18px 0;
   color: var(--rbp-text-muted);
   font-size: 12px;
 }
@@ -136,12 +149,75 @@
   background: var(--rbp-gray-border);
 }
 
+/* ---------- Quick Fill Demo Accounts Card ---------- */
+
+.demo-fill-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 20px;
+}
+
+.demo-card-title {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.demo-buttons-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.demo-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 4px;
+  background: var(--rbp-white);
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.demo-btn:hover {
+  background: #f1f5f9;
+  border-color: var(--rbp-navy);
+}
+
+.demo-btn.active {
+  background: #ebf3ff;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px #2563eb;
+}
+
+.demo-btn-dept {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--rbp-navy);
+}
+
+.demo-btn-id {
+  font-size: 10px;
+  color: var(--rbp-text-muted);
+  font-family: monospace;
+}
+
 /* ---------- Form ---------- */
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 }
 
 .field {
@@ -178,19 +254,87 @@
   box-shadow: 0 0 0 3px rgba(11, 37, 69, 0.12);
 }
 
+.field input:disabled,
+.field select:disabled {
+  background-color: #f1f5f9;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* ---------- Alert & Status Boxes ---------- */
+
 .form-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
   margin: 0;
-  padding: 8px 10px;
+  padding: 10px 12px;
   border-radius: 6px;
   background: #fdecee;
   border: 1px solid rgba(200, 16, 46, 0.25);
   color: var(--rbp-red);
   font-size: 13px;
+  line-height: 1.4;
 }
 
+.error-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.form-success {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 6px;
+  background: #f0fdf4;
+  border: 1px solid rgba(16, 124, 65, 0.25);
+  color: #14532d;
+  font-size: 13px;
+}
+
+.success-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.success-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: var(--rbp-green);
+  color: white;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.success-details {
+  margin-left: 26px;
+}
+
+.success-details p {
+  margin: 3px 0;
+  font-size: 12.5px;
+}
+
+.success-routing-note {
+  margin-top: 8px !important;
+  font-weight: 600;
+  color: var(--rbp-green);
+  border-top: 1px dashed rgba(16, 124, 65, 0.25);
+  padding-top: 6px;
+}
+
+/* ---------- Submit Button ---------- */
+
 .login-btn {
-  margin-top: 4px;
-  padding: 11px 16px;
+  margin-top: 6px;
+  padding: 12px 16px;
   border: none;
   border-radius: 6px;
   background: var(--rbp-orange);
@@ -198,10 +342,13 @@
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: background-color 0.15s ease, transform 0.05s ease;
 }
 
-.login-btn:hover {
+.login-btn:hover:not(:disabled) {
   background: var(--rbp-orange-hover);
 }
 
@@ -210,8 +357,35 @@
   outline-offset: 2px;
 }
 
-.login-btn:active {
+.login-btn:active:not(:disabled) {
   transform: translateY(1px);
+}
+
+.login-btn:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+.btn-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ---------- Right: image panel ---------- */
@@ -234,26 +408,60 @@
 
 .image-panel-overlay {
   position: absolute;
-  left: 40px;
+  left: 48px;
   bottom: 48px;
+  right: 48px;
   color: var(--rbp-white);
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.65);
+}
+
+.overlay-pill {
+  display: inline-block;
+  background: rgba(11, 37, 69, 0.75);
+  backdrop-filter: blur(8px);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .image-panel-overlay h2 {
-  margin: 0 0 6px;
-  font-size: 28px;
-  font-weight: 700;
+  margin: 0 0 8px;
+  font-size: 32px;
+  font-weight: 800;
   letter-spacing: 0.01em;
+  line-height: 1.2;
 }
 
 .image-panel-overlay p {
-  margin: 0;
-  font-size: 14px;
+  margin: 0 0 16px;
+  font-size: 14.5px;
   font-weight: 500;
+  max-width: 520px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.9);
 }
 
-/* ---------- Entrance animation (subtle, easy to remove) ---------- */
+.dept-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.dept-tag {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ---------- Entrance animation ---------- */
 
 .login-panel-inner {
   animation: rbp-fade-in 0.4s ease both;
@@ -285,26 +493,35 @@
 
   .image-panel {
     order: -1;
-    min-height: 240px;
+    min-height: 260px;
     flex: none;
   }
 
   .login-panel {
-    padding: 36px 24px 48px;
+    padding: 32px 20px 48px;
   }
 
   .image-panel-overlay {
     left: 20px;
     bottom: 20px;
+    right: 20px;
   }
 
   .image-panel-overlay h2 {
     font-size: 22px;
+  }
+
+  .dept-tags {
+    display: none;
   }
 }
 
 @media (max-width: 420px) {
   .login-panel-inner {
     max-width: 100%;
+  }
+
+  .demo-buttons-row {
+    grid-template-columns: 1fr;
   }
 }

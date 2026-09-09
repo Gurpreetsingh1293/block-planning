@@ -1,58 +1,68 @@
 import { useState } from "react";
 import "./Login.css";
-
-// =====================================================
-// REPLACE THIS IMAGE:
-// Place the desired railway/Vande Bharat image at:
-// frontend/src/assets/images/vande-bharat.jpg
-// (Replace the file directly — this import path never
-// needs to change unless you rename the file itself.)
-// =====================================================
 import vandeBharatImage from "../assets/images/vande-bharat.jpg";
+import { loginUser } from "../api/client";
 
-// Department values used across the app for future routing.
-// Keep these exact strings in sync with any routing/dashboard code.
+// Department values used across the app for department routing.
+// Kept in sync with teammate's upcoming department dashboard modules.
 const DEPARTMENTS = [
-  { value: "engineering", label: "Engineering" },
-  { value: "snt", label: "Signal & Telecommunication (S&T)" },
-  { value: "traction", label: "Traction Distribution" },
+  { value: "engineering", label: "Engineering (Civil / Track P-Way)", code: "ENG" },
+  { value: "snt", label: "Signal & Telecommunication (S&T)", code: "S&T" },
+  { value: "traction", label: "Traction Distribution (TRD / OHE)", code: "TRD" },
 ];
 
-// -----------------------------------------------------
-// Mock authentication (frontend-only placeholder)
-// Replace this function with a real API call, e.g.:
-//   const res = await apiClient.post("/auth/login", { userId, password });
-// Keep the same input/output shape so callers below don't change.
-// -----------------------------------------------------
-function mockAuthenticate(userId, password) {
-  // TODO: connect to backend authentication endpoint.
-  // For now, any non-empty userId/password is treated as valid.
-  return Boolean(userId.trim()) && Boolean(password.trim());
-}
-
-// -----------------------------------------------------
-// Google login placeholder.
-// Isolated on purpose so real Google OAuth can be dropped
-// in here later without touching the rest of the page.
-// -----------------------------------------------------
-function handleGoogleLogin() {
-  // TODO: implement real Google OAuth (e.g. Google Identity Services).
-  // Do NOT simulate a successful login here.
-  console.log("Google login clicked - OAuth not yet implemented.");
-}
+// Quick-fill demo credentials for hackathon evaluation & testing
+const DEMO_OFFICER_PRESETS = [
+  {
+    label: "Engineering (ENG001)",
+    userId: "ENG001",
+    department: "engineering",
+    badge: "P-Way",
+  },
+  {
+    label: "S&T (SNT001)",
+    userId: "SNT001",
+    department: "snt",
+    badge: "Signal & Telecom",
+  },
+  {
+    label: "Traction (TRD001)",
+    userId: "TRD001",
+    department: "traction",
+    badge: "OHE / Electrical",
+  },
+];
 
 export default function Login() {
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [department, setDepartment] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  function handleLogin(e) {
+  // Quick fill helper for evaluation demo
+  function handleQuickFill(preset) {
+    setUserId(preset.userId);
+    setPassword("railway@123");
+    setDepartment(preset.department);
+    setError("");
+    setSuccess(null);
+  }
+
+  // Google OAuth placeholder (to be implemented in future phase)
+  function handleGoogleLogin() {
+    console.log("[RBP Auth] Google OAuth clicked - reserved for future implementation.");
+    setError("Google authentication will be connected in a future update. Please sign in with your Railway User ID.");
+  }
+
+  async function handleLogin(e) {
     e.preventDefault();
     setError("");
+    setSuccess(null);
 
     if (!userId.trim()) {
-      setError("Please enter your User ID.");
+      setError("Please enter your Railway User ID.");
       return;
     }
     if (!password.trim()) {
@@ -60,34 +70,41 @@ export default function Login() {
       return;
     }
     if (!department) {
-      setError("Please select your department.");
+      setError("Please select your railway department.");
       return;
     }
 
-    const isAuthenticated = mockAuthenticate(userId, password);
-    if (!isAuthenticated) {
-      setError("Invalid User ID or password.");
-      return;
-    }
+    setIsLoading(true);
 
-    // ==================================================
-    // FUTURE DEPARTMENT ROUTING
-    // engineering → Engineering Dashboard
-    // snt         → S&T Dashboard
-    // traction    → Traction Dashboard
-    //
-    // Once React Router (or similar) is added, replace the
-    // block below with actual navigation, e.g.:
-    //
-    //   const routes = {
-    //     engineering: "/dashboard/engineering",
-    //     snt: "/dashboard/snt",
-    //     traction: "/dashboard/traction",
-    //   };
-    //   navigate(routes[department]);
-    // ==================================================
-    console.log("Login successful. Department selected:", department);
-    console.log("Route to the appropriate dashboard here.");
+    try {
+      // Connect to backend Supabase Auth endpoint
+      const result = await loginUser({
+        userId: userId.trim(),
+        password: password.trim(),
+        department,
+      });
+
+      setSuccess({
+        message: result.message || "Authentication successful.",
+        officer: result.user,
+        department: result.user.department,
+        authSource: result.authSource,
+      });
+
+      // ==================================================
+      // FUTURE DEPARTMENT ROUTING (For teammate integration)
+      // engineering → Engineering Dashboard
+      // snt         → S&T Dashboard
+      // traction    → Traction Dashboard
+      // ==================================================
+      console.log("[RBP Auth] Login successful for:", result.user);
+      console.log("[RBP Auth] Ready to navigate to department dashboard:", result.user.department);
+    } catch (err) {
+      console.error("[RBP Auth Error]:", err);
+      setError(err.message || "Failed to authenticate. Please check your credentials.");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -95,14 +112,17 @@ export default function Login() {
       <section className="login-panel">
         <div className="login-panel-inner">
           <div className="brand">
-            <span className="brand-mark">RBP</span>
-            <span className="brand-name">Railway Block Planning</span>
+            <span className="brand-mark">IR</span>
+            <div className="brand-details">
+              <span className="brand-name">Indian Railways</span>
+              <span className="brand-subtext">Intelligent Block Planning Portal</span>
+            </div>
           </div>
 
-          <h1 className="login-heading">Welcome back</h1>
+          <h1 className="login-heading">Officer Login</h1>
           <p className="login-subtitle">
-            Intelligent maintenance block planning for safer and more
-            reliable train operations.
+            Sign in with your Railway Department credentials to access maintenance block
+            scheduling, AI conflict analysis, and slot allocations.
           </p>
 
           <button
@@ -115,20 +135,42 @@ export default function Login() {
           </button>
 
           <div className="divider">
-            <span>or sign in with User ID</span>
+            <span>or sign in with Railway ID</span>
+          </div>
+
+          {/* Quick-fill demo selector for hackathon testing */}
+          <div className="demo-fill-card">
+            <span className="demo-card-title">Quick Fill Demo Accounts:</span>
+            <div className="demo-buttons-row">
+              {DEMO_OFFICER_PRESETS.map((preset) => (
+                <button
+                  key={preset.userId}
+                  type="button"
+                  className={`demo-btn ${department === preset.department && userId === preset.userId ? "active" : ""}`}
+                  onClick={() => handleQuickFill(preset)}
+                >
+                  <span className="demo-btn-dept">{preset.badge}</span>
+                  <span className="demo-btn-id">{preset.userId}</span>
+                </button>
+              ))}
+            </div>
           </div>
 
           <form className="login-form" onSubmit={handleLogin} noValidate>
             <div className="field">
-              <label htmlFor="userId">User ID</label>
+              <label htmlFor="userId">Railway User ID</label>
               <input
                 id="userId"
                 name="userId"
                 type="text"
                 autoComplete="username"
-                placeholder="Enter your railway user ID"
+                placeholder="e.g. ENG001, SNT001, TRD001"
                 value={userId}
-                onChange={(e) => setUserId(e.target.value)}
+                onChange={(e) => {
+                  setUserId(e.target.value);
+                  if (error) setError("");
+                }}
+                disabled={isLoading}
               />
             </div>
 
@@ -139,9 +181,13 @@ export default function Login() {
                 name="password"
                 type="password"
                 autoComplete="current-password"
-                placeholder="Enter your password"
+                placeholder="Enter railway password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (error) setError("");
+                }}
+                disabled={isLoading}
               />
             </div>
 
@@ -151,10 +197,14 @@ export default function Login() {
                 id="department"
                 name="department"
                 value={department}
-                onChange={(e) => setDepartment(e.target.value)}
+                onChange={(e) => {
+                  setDepartment(e.target.value);
+                  if (error) setError("");
+                }}
+                disabled={isLoading}
               >
                 <option value="" disabled>
-                  Select your department
+                  -- Select Your Department --
                 </option>
                 {DEPARTMENTS.map((dept) => (
                   <option key={dept.value} value={dept.value}>
@@ -165,13 +215,44 @@ export default function Login() {
             </div>
 
             {error && (
-              <p className="form-error" role="alert">
-                {error}
-              </p>
+              <div className="form-error" role="alert">
+                <span className="error-icon">⚠️</span>
+                <span>{error}</span>
+              </div>
             )}
 
-            <button type="submit" className="login-btn">
-              Log In
+            {success && (
+              <div className="form-success" role="status">
+                <div className="success-header">
+                  <span className="success-icon">✓</span>
+                  <strong>{success.message}</strong>
+                </div>
+                <div className="success-details">
+                  <p>
+                    <strong>Officer:</strong> {success.officer.name}
+                  </p>
+                  <p>
+                    <strong>Designation:</strong> {success.officer.designation}
+                  </p>
+                  <p>
+                    <strong>Department:</strong>{" "}
+                    {success.officer.department.toUpperCase()}
+                  </p>
+                  <p className="success-routing-note">
+                    ✓ Session Token stored in Secure Storage. Ready for Department Home Page!
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <button type="submit" className="login-btn" disabled={isLoading}>
+              {isLoading ? (
+                <span className="btn-loading">
+                  <span className="spinner"></span> Verifying Credentials...
+                </span>
+              ) : (
+                "Log In to Operations"
+              )}
             </button>
           </form>
         </div>
@@ -180,19 +261,27 @@ export default function Login() {
       <section className="image-panel" aria-hidden="true">
         <img
           src={vandeBharatImage}
-          alt=""
+          alt="Indian Railways Vande Bharat Express"
           className="image-panel-photo"
         />
         <div className="image-panel-overlay">
-          <h2>INDIAN RAILWAYS</h2>
-          <p>Safety • Security • Punctuality</p>
+          <div className="overlay-pill">GOVERNMENT OF INDIA • MINISTRY OF RAILWAYS</div>
+          <h2>Intelligent Block Planning System</h2>
+          <p>
+            Coordinated Multi-Department Corridor Maintenance for High-Speed & Freight Operations
+          </p>
+          <div className="dept-tags">
+            <span className="dept-tag">Engineering (P-Way)</span>
+            <span className="dept-tag">Signal & Telecom (S&T)</span>
+            <span className="dept-tag">Traction (TRD)</span>
+          </div>
         </div>
       </section>
     </div>
   );
 }
 
-// Small inline icon so no icon library dependency is needed.
+// Inline Google SVG Icon
 function GoogleIcon() {
   return (
     <svg
