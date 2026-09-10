@@ -1,17 +1,11 @@
-const mongoose = require('mongoose');
+const { getDbStatus } = require('../config/db');
 
 /**
  * Health check controller
- * Checks API server status, system uptime, and MongoDB connectivity
+ * Checks API server status, system uptime, and PostgreSQL / Supabase connectivity
  */
 const getHealth = (req, res) => {
-  const dbState = mongoose.connection.readyState;
-  const states = {
-    0: 'disconnected',
-    1: 'connected',
-    2: 'connecting',
-    3: 'disconnecting',
-  };
+  const dbStatus = getDbStatus ? getDbStatus() : { status: 'standby', isConnected: false };
 
   const responsePayload = {
     status: 'ok',
@@ -20,8 +14,9 @@ const getHealth = (req, res) => {
     timestamp: new Date().toISOString(),
     uptimeSeconds: Math.floor(process.uptime()),
     database: {
-      status: states[dbState] || 'unknown',
-      isConnected: dbState === 1,
+      status: dbStatus.status,
+      isConnected: dbStatus.isConnected,
+      type: dbStatus.type || 'PostgreSQL / Supabase',
     },
     environment: process.env.NODE_ENV || 'development',
   };

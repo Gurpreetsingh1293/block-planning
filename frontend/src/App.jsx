@@ -1,34 +1,60 @@
-import React from 'react';
-import Dashboard from './pages/Dashboard';
-import { ShieldCheck, Activity } from 'lucide-react';
+import { useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import MainLayout from "./components/layout/MainLayout";
+import Home from "./pages/Home";
+import LiveTracking from "./pages/LiveTracking";
+import BlockPlanning from "./pages/BlockPlanning";
+import ComingSoon from "./pages/ComingSoon";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import STDashboard from "./pages/STDashboard";
+import { getStoredUser, logoutUser } from "./api/client";
 
-export default function App() {
+function App() {
+  // Check localStorage for active session so page refresh persists authentication
+  const [currentUser, setCurrentUser] = useState(() => getStoredUser());
+
+  const handleLogin = (userData) => {
+    const user =
+      typeof userData === "string"
+        ? { department: userData.toLowerCase() }
+        : userData;
+
+    setCurrentUser(user);
+  };
+
+  const handleLogout = () => {
+    logoutUser();
+    setCurrentUser(null);
+  };
+
+  // 1. If not logged in, show Railway Officer Login Console
+  if (!currentUser) {
+    return <Login onLogin={handleLogin} />;
+  }
+
+  const dept = (currentUser.department || "").toLowerCase();
+
+  // 2. S&T Department -> Render Delhi-Mumbai S&T Dashboard
+  if (dept === "snt" || dept === "signal") {
+    return <STDashboard user={currentUser} onLogout={handleLogout} />;
+  }
+
+  // 3. For all other departments (Engineering, Traction, etc.) -> Show Main Layout with Home page
   return (
-    <div className="app-container">
-      {/* Top Header */}
-      <header className="header">
-        <div className="brand-wrapper">
-          <div className="brand-icon">
-            <span style={{ fontSize: '1.4rem' }}>🚆</span>
-          </div>
-          <div>
-            <h1 className="brand-title">SIH Block Planning System</h1>
-            <p className="brand-subtitle">
-              Indian Railways Maintenance Block Scheduling & AI Traffic Optimization
-            </p>
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div className="badge badge-success">
-            <ShieldCheck size={14} />
-            <span>Monorepo v1.0</span>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Dashboard Page */}
-      <Dashboard />
-    </div>
+    <BrowserRouter>
+      <MainLayout user={currentUser} onLogout={handleLogout}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/live-tracking" element={<LiveTracking />} />
+          <Route path="/block-planning" element={<BlockPlanning />} />
+          <Route path="/coming-soon" element={<ComingSoon />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </MainLayout>
+    </BrowserRouter>
   );
 }
+
+export default App;

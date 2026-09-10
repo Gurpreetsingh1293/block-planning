@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const healthRoutes = require('./health.routes');
+const authRoutes = require('./auth.routes');
 const Section = require('../models/Section');
 const TrainSchedule = require('../models/TrainSchedule');
 const MaintenanceRequest = require('../models/MaintenanceRequest');
@@ -11,6 +12,9 @@ const { predictBlockRisk } = require('../services/ml.service');
 
 // Health Check
 router.use('/health', healthRoutes);
+
+// Railway Authentication Endpoints
+router.use('/auth', authRoutes);
 
 // Sections Endpoints
 router.get('/sections', async (req, res) => {
