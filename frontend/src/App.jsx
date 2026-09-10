@@ -1,34 +1,25 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import MainLayout from './components/layout/MainLayout';
+import Home from './pages/Home';
+import LiveTracking from './pages/LiveTracking';
+import BlockPlanning from './pages/BlockPlanning';
+import ComingSoon from './pages/ComingSoon';
 import Dashboard from './pages/Dashboard';
-import { ShieldCheck, Activity } from 'lucide-react';
 
 export default function App() {
   return (
-    <div className="app-container">
-      {/* Top Header */}
-      <header className="header">
-        <div className="brand-wrapper">
-          <div className="brand-icon">
-            <span style={{ fontSize: '1.4rem' }}>🚆</span>
-          </div>
-          <div>
-            <h1 className="brand-title">SIH Block Planning System</h1>
-            <p className="brand-subtitle">
-              Indian Railways Maintenance Block Scheduling & AI Traffic Optimization
-            </p>
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div className="badge badge-success">
-            <ShieldCheck size={14} />
-            <span>Monorepo v1.0</span>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Dashboard Page */}
-      <Dashboard />
-    </div>
+    <BrowserRouter>
+      <MainLayout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/live-tracking" element={<LiveTracking />} />
+          <Route path="/block-planning" element={<BlockPlanning />} />
+          <Route path="/coming-soon" element={<ComingSoon />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </MainLayout>
+    </BrowserRouter>
   );
 }
