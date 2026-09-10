@@ -54,7 +54,7 @@ const alerts = [
   { id: "A2", title: "POINT P13 STATUS", level: "healthy", detail: "Healthy" },
 ];
 
-export default function STDashboard() {
+export default function STDashboard({ user, onLogout }) {
   const [filters, setFilters] = useState({
     station: "all",
     status: [],
@@ -120,12 +120,21 @@ export default function STDashboard() {
 
         <div className="st-navbar-actions">
           <div className="st-navbar-profile">
-            <span className="st-navbar-profile-dept">S&amp;T</span>
-            <span className="st-navbar-profile-id">SNT001</span>
+            <span className="st-navbar-profile-dept">
+              {user?.department ? user.department.toUpperCase() : "S&T"}
+            </span>
+            <span className="st-navbar-profile-id">{user?.userId || "SNT001"}</span>
           </div>
-          <button className="st-navbar-cta" type="button">
-            Control Dashboard
-          </button>
+          {onLogout && (
+            <button
+              className="st-navbar-logout"
+              type="button"
+              onClick={onLogout}
+              title="Sign out of Railway Officer session"
+            >
+              Sign Out
+            </button>
+          )}
         </div>
       </header>
 
@@ -207,7 +216,9 @@ export default function STDashboard() {
           </div>
           <div className="st-footer-section">
             <span className="st-footer-label">User:</span>
-            <span className="st-footer-value">S&T Officer (SNT001)</span>
+            <span className="st-footer-value">
+              {user?.name ? `${user.name} (${user.userId})` : "S&T Officer (SNT001)"}
+            </span>
           </div>
           <div className="st-footer-section">
             <span className="st-footer-label">Station:</span>

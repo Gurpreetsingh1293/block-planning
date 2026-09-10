@@ -140,6 +140,24 @@
   cursor: pointer;
 }
 
+.st-navbar-logout {
+  background: transparent;
+  color: #c8102e;
+  border: 1px solid rgba(200, 16, 46, 0.4);
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.st-navbar-logout:hover {
+  background: #c8102e;
+  color: #fff;
+  border-color: #c8102e;
+}
+
 /* Header ----------------------------------------------------------------- */
 
 .st-header {

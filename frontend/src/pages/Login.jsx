@@ -114,7 +114,12 @@ export default function Login({ onLogin }) {
       const loggedInDepartment =
         result?.user?.department?.toLowerCase() || department.toLowerCase();
 
-      onLogin(loggedInDepartment);
+      if (onLogin) {
+        onLogin({
+          ...(result?.user || {}),
+          department: loggedInDepartment,
+        });
+      }
 
     } catch (err) {
       console.error("[RBP Auth Error]:", err);

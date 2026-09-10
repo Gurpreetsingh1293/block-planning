@@ -1,0 +1,325 @@
+/* =====================================================
+   DepartmentStandby.css
+   Indian Railways official styling for departments under development
+   ===================================================== */
+
+.standby-page {
+  min-height: 100vh;
+  background: #f4f6f9;
+  display: flex;
+  flex-direction: column;
+  color: #0b2545;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Navbar */
+.standby-navbar {
+  background: #0b2545;
+  color: #ffffff;
+  padding: 12px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid #c8102e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.standby-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.standby-brand-mark {
+  width: 36px;
+  height: 36px;
+  background: #c8102e;
+  color: #ffffff;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+}
+
+.standby-brand-title {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.standby-brand-sub {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.standby-officer-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.standby-officer-pill {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 6px 14px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.standby-officer-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.standby-officer-role {
+  font-size: 11px;
+  color: #38bdf8;
+}
+
+.standby-logout-btn {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.standby-logout-btn:hover {
+  background: #c8102e;
+  border-color: #c8102e;
+}
+
+/* Main Container */
+.standby-content {
+  flex: 1;
+  max-width: 1080px;
+  width: 100%;
+  margin: 36px auto;
+  padding: 0 20px;
+}
+
+.standby-card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 32px 36px;
+  box-shadow: 0 4px 16px rgba(11, 37, 69, 0.06);
+}
+
+.standby-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #edf2f7;
+  padding-bottom: 16px;
+}
+
+.standby-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.standby-dept-badge {
+  background: #ebf3ff;
+  color: #1e40af;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid #bfdbfe;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.standby-status-pill {
+  background: #fffbeb;
+  color: #b45309;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid #fde68a;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.standby-status-dot {
+  width: 8px;
+  height: 8px;
+  background: #f59e0b;
+  border-radius: 50%;
+  animation: pulse-dot 1.5s infinite;
+}
+
+@keyframes pulse-dot {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.2); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.standby-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0b2545;
+  margin: 0 0 10px 0;
+}
+
+.standby-desc {
+  font-size: 15px;
+  color: #5b6472;
+  line-height: 1.6;
+  margin: 0 0 28px 0;
+  max-width: 780px;
+}
+
+/* Actions Row */
+.standby-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 32px;
+}
+
+.btn-preview-st {
+  background: #0b2545;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.15s ease;
+}
+
+.btn-preview-st:hover {
+  background: #13315c;
+}
+
+.btn-general-console {
+  background: #ffffff;
+  color: #0b2545;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-general-console:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.btn-switch-account {
+  background: transparent;
+  color: #c8102e;
+  border: 1px solid rgba(200, 16, 46, 0.3);
+  border-radius: 6px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: auto;
+  transition: all 0.15s ease;
+}
+
+.btn-switch-account:hover {
+  background: #fdecee;
+  border-color: #c8102e;
+}
+
+/* Upcoming features preview */
+.standby-preview-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0b2545;
+  margin: 0 0 16px 0;
+}
+
+.standby-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.feature-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 18px;
+  background: #fafbfc;
+  transition: transform 0.15s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+}
+
+.feature-badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 6px;
+  display: inline-block;
+}
+
+.feature-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0b2545;
+  margin: 0 0 6px 0;
+}
+
+.feature-detail {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .standby-navbar {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .standby-officer-meta {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .standby-card {
+    padding: 24px 20px;
+  }
+  .standby-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .btn-switch-account {
+    margin-left: 0;
+  }
+}
