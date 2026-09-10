@@ -3,15 +3,24 @@ import "./Login.css";
 import vandeBharatImage from "../assets/images/vande-bharat.jpg";
 import { loginUser } from "../api/client";
 
-// Department values used across the app for department routing.
-// Kept in sync with teammate's upcoming department dashboard modules.
 const DEPARTMENTS = [
-  { value: "engineering", label: "Engineering (Civil / Track P-Way)", code: "ENG" },
-  { value: "snt", label: "Signal & Telecommunication (S&T)", code: "S&T" },
-  { value: "traction", label: "Traction Distribution (TRD / OHE)", code: "TRD" },
+  {
+    value: "engineering",
+    label: "Engineering (Civil / Track P-Way)",
+    code: "ENG",
+  },
+  {
+    value: "snt",
+    label: "Signal & Telecommunication (S&T)",
+    code: "S&T",
+  },
+  {
+    value: "traction",
+    label: "Traction Distribution (TRD / OHE)",
+    code: "TRD",
+  },
 ];
 
-// Quick-fill demo credentials for hackathon evaluation & testing
 const DEMO_OFFICER_PRESETS = [
   {
     label: "Engineering (ENG001)",
@@ -33,7 +42,7 @@ const DEMO_OFFICER_PRESETS = [
   },
 ];
 
-export default function Login() {
+export default function Login({ onLogin }) {
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [department, setDepartment] = useState("");
@@ -41,7 +50,6 @@ export default function Login() {
   const [success, setSuccess] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Quick fill helper for evaluation demo
   function handleQuickFill(preset) {
     setUserId(preset.userId);
     setPassword("railway@123");
@@ -50,14 +58,19 @@ export default function Login() {
     setSuccess(null);
   }
 
-  // Google OAuth placeholder (to be implemented in future phase)
   function handleGoogleLogin() {
-    console.log("[RBP Auth] Google OAuth clicked - reserved for future implementation.");
-    setError("Google authentication will be connected in a future update. Please sign in with your Railway User ID.");
+    console.log(
+      "[RBP Auth] Google OAuth clicked - reserved for future implementation."
+    );
+
+    setError(
+      "Google authentication will be connected in a future update. Please sign in with your Railway User ID."
+    );
   }
 
   async function handleLogin(e) {
     e.preventDefault();
+
     setError("");
     setSuccess(null);
 
@@ -65,10 +78,12 @@ export default function Login() {
       setError("Please enter your Railway User ID.");
       return;
     }
+
     if (!password.trim()) {
       setError("Please enter your password.");
       return;
     }
+
     if (!department) {
       setError("Please select your railway department.");
       return;
@@ -77,31 +92,37 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      // Connect to backend Supabase Auth endpoint
       const result = await loginUser({
         userId: userId.trim(),
         password: password.trim(),
         department,
       });
 
-      setSuccess({
-        message: result.message || "Authentication successful.",
-        officer: result.user,
-        department: result.user.department,
-        authSource: result.authSource,
-      });
+      console.log("[RBP Auth] Login successful:", result.user);
 
-      // ==================================================
-      // FUTURE DEPARTMENT ROUTING (For teammate integration)
-      // engineering → Engineering Dashboard
-      // snt         → S&T Dashboard
-      // traction    → Traction Dashboard
-      // ==================================================
-      console.log("[RBP Auth] Login successful for:", result.user);
-      console.log("[RBP Auth] Ready to navigate to department dashboard:", result.user.department);
+      /*
+       * IMPORTANT:
+       * Send the selected department to App.jsx.
+       *
+       * For S&T:
+       * department = "snt"
+       *
+       * App.jsx will then render:
+       * <STDashboard />
+       */
+
+      const loggedInDepartment =
+        result?.user?.department?.toLowerCase() || department.toLowerCase();
+
+      onLogin(loggedInDepartment);
+
     } catch (err) {
       console.error("[RBP Auth Error]:", err);
-      setError(err.message || "Failed to authenticate. Please check your credentials.");
+
+      setError(
+        err.message ||
+          "Failed to authenticate. Please check your credentials."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -113,16 +134,21 @@ export default function Login() {
         <div className="login-panel-inner">
           <div className="brand">
             <span className="brand-mark">IR</span>
+
             <div className="brand-details">
               <span className="brand-name">Indian Railways</span>
-              <span className="brand-subtext">Intelligent Block Planning Portal</span>
+              <span className="brand-subtext">
+                Intelligent Block Planning Portal
+              </span>
             </div>
           </div>
 
           <h1 className="login-heading">Officer Login</h1>
+
           <p className="login-subtitle">
-            Sign in with your Railway Department credentials to access maintenance block
-            scheduling, AI conflict analysis, and slot allocations.
+            Sign in with your Railway Department credentials to access
+            maintenance block scheduling, AI conflict analysis, and slot
+            allocations.
           </p>
 
           <button
@@ -138,15 +164,22 @@ export default function Login() {
             <span>or sign in with Railway ID</span>
           </div>
 
-          {/* Quick-fill demo selector for hackathon testing */}
           <div className="demo-fill-card">
-            <span className="demo-card-title">Quick Fill Demo Accounts:</span>
+            <span className="demo-card-title">
+              Quick Fill Demo Accounts:
+            </span>
+
             <div className="demo-buttons-row">
               {DEMO_OFFICER_PRESETS.map((preset) => (
                 <button
                   key={preset.userId}
                   type="button"
-                  className={`demo-btn ${department === preset.department && userId === preset.userId ? "active" : ""}`}
+                  className={`demo-btn ${
+                    department === preset.department &&
+                    userId === preset.userId
+                      ? "active"
+                      : ""
+                  }`}
                   onClick={() => handleQuickFill(preset)}
                 >
                   <span className="demo-btn-dept">{preset.badge}</span>
@@ -156,9 +189,14 @@ export default function Login() {
             </div>
           </div>
 
-          <form className="login-form" onSubmit={handleLogin} noValidate>
+          <form
+            className="login-form"
+            onSubmit={handleLogin}
+            noValidate
+          >
             <div className="field">
               <label htmlFor="userId">Railway User ID</label>
+
               <input
                 id="userId"
                 name="userId"
@@ -168,7 +206,10 @@ export default function Login() {
                 value={userId}
                 onChange={(e) => {
                   setUserId(e.target.value);
-                  if (error) setError("");
+
+                  if (error) {
+                    setError("");
+                  }
                 }}
                 disabled={isLoading}
               />
@@ -176,6 +217,7 @@ export default function Login() {
 
             <div className="field">
               <label htmlFor="password">Password</label>
+
               <input
                 id="password"
                 name="password"
@@ -185,7 +227,10 @@ export default function Login() {
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
-                  if (error) setError("");
+
+                  if (error) {
+                    setError("");
+                  }
                 }}
                 disabled={isLoading}
               />
@@ -193,19 +238,24 @@ export default function Login() {
 
             <div className="field">
               <label htmlFor="department">Department</label>
+
               <select
                 id="department"
                 name="department"
                 value={department}
                 onChange={(e) => {
                   setDepartment(e.target.value);
-                  if (error) setError("");
+
+                  if (error) {
+                    setError("");
+                  }
                 }}
                 disabled={isLoading}
               >
                 <option value="" disabled>
                   -- Select Your Department --
                 </option>
+
                 {DEPARTMENTS.map((dept) => (
                   <option key={dept.value} value={dept.value}>
                     {dept.label}
@@ -227,28 +277,34 @@ export default function Login() {
                   <span className="success-icon">✓</span>
                   <strong>{success.message}</strong>
                 </div>
+
                 <div className="success-details">
                   <p>
                     <strong>Officer:</strong> {success.officer.name}
                   </p>
+
                   <p>
-                    <strong>Designation:</strong> {success.officer.designation}
+                    <strong>Designation:</strong>{" "}
+                    {success.officer.designation}
                   </p>
+
                   <p>
                     <strong>Department:</strong>{" "}
                     {success.officer.department.toUpperCase()}
-                  </p>
-                  <p className="success-routing-note">
-                    ✓ Session Token stored in Secure Storage. Ready for Department Home Page!
                   </p>
                 </div>
               </div>
             )}
 
-            <button type="submit" className="login-btn" disabled={isLoading}>
+            <button
+              type="submit"
+              className="login-btn"
+              disabled={isLoading}
+            >
               {isLoading ? (
                 <span className="btn-loading">
-                  <span className="spinner"></span> Verifying Credentials...
+                  <span className="spinner"></span>
+                  Verifying Credentials...
                 </span>
               ) : (
                 "Log In to Operations"
@@ -264,15 +320,24 @@ export default function Login() {
           alt="Indian Railways Vande Bharat Express"
           className="image-panel-photo"
         />
+
         <div className="image-panel-overlay">
-          <div className="overlay-pill">GOVERNMENT OF INDIA • MINISTRY OF RAILWAYS</div>
+          <div className="overlay-pill">
+            GOVERNMENT OF INDIA • MINISTRY OF RAILWAYS
+          </div>
+
           <h2>Intelligent Block Planning System</h2>
+
           <p>
-            Coordinated Multi-Department Corridor Maintenance for High-Speed & Freight Operations
+            Coordinated Multi-Department Corridor Maintenance for High-Speed &
+            Freight Operations
           </p>
+
           <div className="dept-tags">
             <span className="dept-tag">Engineering (P-Way)</span>
-            <span className="dept-tag">Signal & Telecom (S&T)</span>
+            <span className="dept-tag">
+              Signal & Telecom (S&T)
+            </span>
             <span className="dept-tag">Traction (TRD)</span>
           </div>
         </div>
@@ -281,7 +346,6 @@ export default function Login() {
   );
 }
 
-// Inline Google SVG Icon
 function GoogleIcon() {
   return (
     <svg
@@ -295,14 +359,17 @@ function GoogleIcon() {
         fill="#4285F4"
         d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z"
       />
+
       <path
         fill="#34A853"
         d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.55-1.85.87-3.04.87-2.34 0-4.32-1.58-5.03-3.7H.98v2.33A9 9 0 0 0 9 18z"
       />
+
       <path
         fill="#FBBC05"
         d="M3.97 10.73A5.4 5.4 0 0 1 3.68 9c0-.6.1-1.19.29-1.73V4.94H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.06l2.99-2.33z"
       />
+
       <path
         fill="#EA4335"
         d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.47.89 11.43 0 9 0A9 9 0 0 0 .98 4.94l2.99 2.33C4.68 5.16 6.66 3.58 9 3.58z"
