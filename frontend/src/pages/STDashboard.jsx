@@ -1,4 +1,11 @@
 import React, { useState } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Sidebar from "../components/layout/Sidebar";
+import Home from "./Home";
+import LiveTracking from "./LiveTracking";
+import BlockPlanning from "./BlockPlanning";
+import ComingSoon from "./ComingSoon";
+import Dashboard from "./Dashboard";
 import STTrackDiagram from "../components/STDashboard/STTrackDiagram";
 import STStatusPanel from "../components/STDashboard/STStatusPanel";
 import STTrainPanel from "../components/STDashboard/STTrainPanel";
@@ -54,7 +61,8 @@ const alerts = [
   { id: "A2", title: "POINT P13 STATUS", level: "healthy", detail: "Healthy" },
 ];
 
-export default function STDashboard({ user, onLogout }) {
+// S&T Operations Content Component
+function STOperationsContent({ user, onLogout }) {
   const [filters, setFilters] = useState({
     station: "all",
     status: [],
@@ -125,14 +133,18 @@ export default function STDashboard({ user, onLogout }) {
             </span>
             <span className="st-navbar-profile-id">{user?.userId || "SNT001"}</span>
           </div>
-          {onLogout && (
+          {onLogout ? (
             <button
-              className="st-navbar-logout"
+              className="st-navbar-cta"
               type="button"
               onClick={onLogout}
-              title="Sign out of Railway Officer session"
+              title="Sign out"
             >
               Sign Out
+            </button>
+          ) : (
+            <button className="st-navbar-cta" type="button">
+              Control Dashboard
             </button>
           )}
         </div>
@@ -234,5 +246,29 @@ export default function STDashboard({ user, onLogout }) {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function STDashboard({ user, onLogout }) {
+  return (
+    <BrowserRouter>
+      <div className="app-layout-wrapper">
+        {/* Existing Sidebar from main UI */}
+        <Sidebar />
+
+        {/* S&T Dashboard Content with Routing */}
+        <div className="app-main-viewport">
+          <Routes>
+            <Route path="/" element={<STOperationsContent user={user} onLogout={onLogout} />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/live-tracking" element={<LiveTracking />} />
+            <Route path="/block-planning" element={<BlockPlanning />} />
+            <Route path="/coming-soon" element={<ComingSoon />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
+      </div>
+    </BrowserRouter>
   );
 }
