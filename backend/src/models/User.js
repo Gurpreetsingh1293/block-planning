@@ -13,6 +13,7 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
+      field: 'user_id',
       comment: 'Railway User / Employee ID, e.g. ENG001, SNT001, TRD001',
     },
     name: {
@@ -48,6 +49,8 @@ const User = sequelize.define(
   {
     tableName: 'users',
     timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: false,
   }
 );
 

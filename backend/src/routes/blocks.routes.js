@@ -6,6 +6,9 @@ const {
   createAvailableSlot,
   deleteBlock,
   resetSchedule,
+  getConflicts,
+  optimizeSchedule,
+  getBlockPlanning,
 } = require('../controllers/blocks.controller');
 
 // Middleware to inject Socket.io into request handlers
@@ -15,37 +18,39 @@ const withIo = (handler) => (req, res) => {
 };
 
 /**
- * GET /api/blocks
- * Fetch all maintenance blocks sorted by date/time
- * Auto-seeds 7 initial blocks if collection is empty
+ * 1. Specific Static Routes (must precede parameterized routes)
  */
-router.get('/', withIo(getAllBlocks));
 
-/**
- * POST /api/blocks/available
- * Admin: Designate a new available slot
- * Body: { duration, date, section, track, startTime }
- */
+// GET /api/blocks/planning — Dedicated block planning records with officer relations
+router.get('/planning', getBlockPlanning);
+
+// GET /api/blocks/conflicts — Active schedule conflicts & delays
+router.get('/conflicts', getConflicts);
+
+// POST /api/blocks/optimize — AI slot shifting & bottleneck elimination
+router.post('/optimize', withIo(optimizeSchedule));
+
+// POST /api/blocks/available — Admin designates new available slot
 router.post('/available', withIo(createAvailableSlot));
 
-/**
- * POST /api/blocks/reset
- * Clear and re-seed the standard schedule
- */
+// POST /api/blocks/reset — Clear and re-seed baseline schedule
 router.post('/reset', withIo(resetSchedule));
 
-/**
- * PUT /api/blocks/book/:id
- * Junior Engineer books an available slot
- * Body: { name, department, description }
- */
+// PUT /api/blocks/book/:id — Junior Engineer books an available slot
 router.put('/book/:id', withIo(bookBlock));
 
 /**
- * DELETE /api/blocks/:slotId
- * Admin-only: Delete a block by slotId
- * Requires x-user-role: admin header or ?role=admin query param
+ * 2. Root Collection Route
  */
+
+// GET /api/blocks — Fetch all maintenance blocks
+router.get('/', getAllBlocks);
+
+/**
+ * 3. Parameterized Item Routes
+ */
+
+// DELETE /api/blocks/:slotId — Admin-only block deletion
 router.delete('/:slotId', withIo(deleteBlock));
 
 module.exports = router;

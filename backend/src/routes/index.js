@@ -3,82 +3,88 @@ const router = express.Router();
 
 const healthRoutes = require('./health.routes');
 const authRoutes = require('./auth.routes');
-const Section = require('../models/Section');
-const TrainSchedule = require('../models/TrainSchedule');
-const MaintenanceRequest = require('../models/MaintenanceRequest');
-const GoodsForecast = require('../models/GoodsForecast');
-const BlockPlan = require('../models/BlockPlan');
+const blockRoutes = require('./blocks.routes');
+const trackingRoutes = require('./tracking.routes');
+const stationRoutes = require('./station.routes');
+const stRoutes = require('./st.routes');
+
+const Station = require('../models/Station');
+const Train = require('../models/Train');
+const Block = require('../models/Block');
 const { predictBlockRisk } = require('../services/ml.service');
 
-// Health Check
+// 1. Health Check
 router.use('/health', healthRoutes);
 
-// Railway Authentication Endpoints
+// 2. Railway Authentication Endpoints
 router.use('/auth', authRoutes);
 
-// Sections Endpoints
+// 3. Coordinated Maintenance Blocks & AI Optimizer
+router.use('/blocks', blockRoutes);
+
+// 4. Live Movement Tracking & Corridors
+router.use('/tracking', trackingRoutes);
+
+// 5. Stations & Timetables
+router.use('/stations', stationRoutes);
+
+// 6. Signal & Telecommunication (S&T) Operations
+router.use('/st', stRoutes);
+
+// 7. Backward-compatible / Legacy helper routes (backed by PostgreSQL)
 router.get('/sections', async (req, res) => {
   try {
-    const sections = await Section.find({ isActive: true }).sort({ sectionCode: 1 });
-    res.json({ success: true, count: sections.length, data: sections });
+    const stations = await Station.findAll({ order: [['km_position', 'ASC']] });
+    res.json({ success: true, count: stations.length, data: stations });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// Train Schedules Endpoints
 router.get('/train-schedules', async (req, res) => {
   try {
-    const { section } = req.query;
-    const filter = section ? { traversedSections: section } : {};
-    const schedules = await TrainSchedule.find(filter).sort({ priority: 1 });
-    res.json({ success: true, count: schedules.length, data: schedules });
+    const trains = await Train.findAll({ order: [['priority', 'ASC']] });
+    res.json({ success: true, count: trains.length, data: trains });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// Maintenance Requests Endpoints
 router.get('/maintenance-requests', async (req, res) => {
   try {
-    const requests = await MaintenanceRequest.find().sort({ proposedDate: 1 });
-    res.json({ success: true, count: requests.length, data: requests });
+    const blocks = await Block.findAll({ order: [['start_hour', 'ASC']] });
+    res.json({ success: true, count: blocks.length, data: blocks });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-router.post('/maintenance-requests', async (req, res) => {
-  try {
-    const newRequest = new MaintenanceRequest(req.body);
-    const saved = await newRequest.save();
-    res.status(201).json({ success: true, data: saved });
-  } catch (err) {
-    res.status(400).json({ success: false, error: err.message });
-  }
-});
-
-// Goods Forecasts Endpoints
-router.get('/goods-forecasts', async (req, res) => {
-  try {
-    const forecasts = await GoodsForecast.find().sort({ date: 1 });
-    res.json({ success: true, count: forecasts.length, data: forecasts });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-// Block Plans Endpoints
 router.get('/block-plans', async (req, res) => {
   try {
-    const plans = await BlockPlan.find().sort({ planDate: -1 });
+    const blocks = await Block.findAll({ order: [['start_hour', 'ASC']] });
+    res.json({ success: true, count: blocks.length, data: blocks });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.get('/block-planning', async (req, res) => {
+  try {
+    const BlockPlanning = require('../models/BlockPlanning');
+    const plans = await BlockPlanning.findAll({
+      order: [['scheduled_date', 'ASC'], ['start_time', 'ASC']],
+      include: [
+        { association: 'officer', attributes: ['userId', 'name', 'designation', 'department'], required: false },
+        { association: 'slot', attributes: ['title', 'section', 'track', 'status', 'colorKey'], required: false },
+      ],
+    });
     res.json({ success: true, count: plans.length, data: plans });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// AI & ML Block Plan Risk Evaluation
+// 8. AI & ML Block Plan Risk Evaluation
 router.post('/block-plans/evaluate-risk', async (req, res) => {
   try {
     const { sectionCode, workType, requestedDurationMinutes, scheduledHour } = req.body;
