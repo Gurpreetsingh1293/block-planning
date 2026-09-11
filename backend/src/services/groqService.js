@@ -8,21 +8,32 @@ const Groq = require('groq-sdk');
 
 class GroqService {
   constructor() {
-    if (!process.env.GROQ_API_KEY) {
-      console.warn('GROQ_API_KEY not configured. AI optimization features will be disabled.');
-      this.client = null;
-    } else {
-      this.client = new Groq({
-        apiKey: process.env.GROQ_API_KEY
-      });
+    this.client = null;
+    this.getClient();
+  }
+
+  /**
+   * Get or dynamically initialize Groq client
+   */
+  getClient() {
+    if (!this.client) {
+      try {
+        require('dotenv').config();
+      } catch (e) {}
+      const apiKey = process.env.GROQ_API_KEY;
+      if (apiKey && apiKey !== 'your_groq_api_key_here' && apiKey.startsWith('gsk_')) {
+        this.client = new Groq({ apiKey });
+        console.log('[GroqService] Groq AI client initialized successfully.');
+      }
     }
+    return this.client;
   }
 
   /**
    * Check if Groq service is available
    */
   isAvailable() {
-    return this.client !== null;
+    return this.getClient() !== null;
   }
 
   /**

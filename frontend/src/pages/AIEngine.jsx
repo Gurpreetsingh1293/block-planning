@@ -277,12 +277,34 @@ export default function AIEngine() {
             background: aiStatus?.aiServiceAvailable ? '#4CAF50' : '#FF9800',
             animation: aiStatus?.aiServiceAvailable ? 'pulse 2s infinite' : 'none'
           }} />
-          <div style={{ flex: 1 }}>
-            <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>
-              AI ENGINE: {aiStatus?.aiServiceAvailable ? 'Operational' : 'Checking...'}
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+            <span style={{ fontWeight: '700', color: 'var(--text-primary)' }}>
+              AI ENGINE: {aiStatus === null ? 'Connecting...' : aiStatus?.aiServiceAvailable ? 'Operational' : 'Service Offline'}
             </span>
-            <span style={{ marginLeft: '16px', color: 'var(--text-secondary)', fontSize: '14px' }}>
-              Last optimization: {new Date().toLocaleTimeString()}
+            {aiStatus?.model && (
+              <span style={{ background: 'rgba(0,0,0,0.06)', padding: '2px 8px', borderRadius: '6px', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                {aiStatus.provider} · {aiStatus.model}
+              </span>
+            )}
+            {aiStatus && !aiStatus.aiServiceAvailable && (
+              <button
+                onClick={initializeAIEngine}
+                style={{
+                  background: 'none',
+                  border: '1px solid #FF9800',
+                  color: '#E65100',
+                  borderRadius: '6px',
+                  padding: '2px 8px',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >
+                ↻ Re-check Status
+              </button>
+            )}
+            <span style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>
+              Last checked: {new Date().toLocaleTimeString()}
             </span>
           </div>
           <div style={{ display: 'flex', gap: '12px' }}>
