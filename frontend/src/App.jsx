@@ -20,6 +20,15 @@ function App() {
   const [previewingEngineering, setPreviewingEngineering] = useState(false);
   const [previewingTraction, setPreviewingTraction] = useState(false);
   const [browsingGeneral, setBrowsingGeneral] = useState(false);
+  const [browsingStandby, setBrowsingStandby] = useState(false);
+
+  const resetViews = () => {
+    setPreviewingST(false);
+    setPreviewingEngineering(false);
+    setPreviewingTraction(false);
+    setBrowsingGeneral(false);
+    setBrowsingStandby(false);
+  };
 
   const handleLogin = (userData) => {
     const user =
@@ -28,19 +37,13 @@ function App() {
         : userData;
 
     setCurrentUser(user);
-    setPreviewingST(false);
-    setPreviewingEngineering(false);
-    setPreviewingTraction(false);
-    setBrowsingGeneral(false);
+    resetViews();
   };
 
   const handleLogout = () => {
     logoutUser();
     setCurrentUser(null);
-    setPreviewingST(false);
-    setPreviewingEngineering(false);
-    setPreviewingTraction(false);
-    setBrowsingGeneral(false);
+    resetViews();
   };
 
   // 1. If not logged in, show Railway Officer Login Console
@@ -50,212 +53,107 @@ function App() {
 
   const dept = (currentUser.department || "").toLowerCase();
 
-  // 2. S&T Department (or active S&T preview mode) -> Render Delhi-Mumbai S&T Dashboard
-  if (dept === "snt" || dept === "signal" || previewingST) {
+  // 2. Explicit Previews from Standby Portal
+  if (previewingEngineering) {
     return (
-      <div>
-        {previewingST && (
-          <div
-            style={{
-              background: "#0b2545",
-              color: "#fff",
-              padding: "6px 20px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              fontSize: "12px",
-              borderBottom: "1px solid rgba(255,255,255,0.2)",
-            }}
-          >
-            <span>
-              ℹ️ <strong>Preview Mode:</strong> Viewing S&T Delhi-Mumbai Corridor Operations (Logged in as {currentUser.name || currentUser.userId})
-            </span>
-            <button
-              type="button"
-              onClick={() => setPreviewingST(false)}
-              style={{
-                background: "#f37021",
-                color: "#fff",
-                border: "none",
-                borderRadius: "4px",
-                padding: "3px 10px",
-                cursor: "pointer",
-                fontWeight: 600,
-              }}
-            >
-              Return to Department Portal
-            </button>
-          </div>
-        )}
-        <STDashboard user={currentUser} onLogout={handleLogout} />
-      </div>
+      <EngineeringDashboard
+        user={currentUser}
+        onLogout={handleLogout}
+        onReturn={() => {
+          setPreviewingEngineering(false);
+          setBrowsingStandby(true);
+        }}
+      />
     );
   }
 
-  // 3. Engineering Dashboard
-  if (previewingEngineering) {
+  if (previewingTraction) {
     return (
-      <div>
-        <div
-          style={{
-            background: "#0b2545",
-            color: "#fff",
-            padding: "6px 20px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            fontSize: "12px",
-            borderBottom: "1px solid rgba(255,255,255,0.2)",
-          }}
-        >
-          <span>
-            ℹ️ <strong>Preview Mode:</strong> Viewing Engineering (Civil / Track P-Way) Operations (Logged in as {currentUser.name || currentUser.userId})
-          </span>
-          <button
-            type="button"
-            onClick={() => setPreviewingEngineering(false)}
-            style={{
-              background: "#0284c7",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              padding: "3px 10px",
-              cursor: "pointer",
-              fontWeight: 600,
-            }}
-          >
-            Return to Department Portal
-          </button>
-        </div>
+      <TractionDashboard
+        user={currentUser}
+        onLogout={handleLogout}
+        onReturn={() => {
+          setPreviewingTraction(false);
+          setBrowsingStandby(true);
+        }}
+      />
+    );
+  }
+
+  if (previewingST) {
+    return <STDashboard user={currentUser} onLogout={handleLogout} />;
+  }
+
+  // 3. Standby Portal (if user explicitly navigated to it via onReturn)
+  if (browsingStandby) {
+    return (
+      <DepartmentStandby
+        user={currentUser}
+        onLogout={handleLogout}
+        onPreviewST={() => {
+          setBrowsingStandby(false);
+          setPreviewingST(true);
+        }}
+        onPreviewEngineering={() => {
+          setBrowsingStandby(false);
+          setPreviewingEngineering(true);
+        }}
+        onPreviewTraction={() => {
+          setBrowsingStandby(false);
+          setPreviewingTraction(true);
+        }}
+        onOpenGeneral={() => {
+          setBrowsingStandby(false);
+          setBrowsingGeneral(true);
+        }}
+      />
+    );
+  }
+
+  // 4. Department-Specific Primary Dashboards upon Login
+  if (!browsingGeneral) {
+    // S&T Department -> Render Delhi-Mumbai S&T Dashboard
+    if (dept === "snt" || dept === "signal") {
+      return <STDashboard user={currentUser} onLogout={handleLogout} />;
+    }
+
+    // Engineering Department -> Render Engineering (Civil / P-Way) Dashboard
+    if (dept === "engineering" || dept === "eng" || dept === "civil" || dept === "pway") {
+      return (
         <EngineeringDashboard
           user={currentUser}
           onLogout={handleLogout}
-          onReturn={() => setPreviewingEngineering(false)}
+          onReturn={() => setBrowsingStandby(true)}
         />
-      </div>
-    );
-  }
+      );
+    }
 
-  // 4. Traction Dashboard
-  if (previewingTraction) {
-    return (
-      <div>
-        <div
-          style={{
-            background: "#0b2545",
-            color: "#fff",
-            padding: "6px 20px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            fontSize: "12px",
-            borderBottom: "1px solid rgba(255,255,255,0.2)",
-          }}
-        >
-          <span>
-            ℹ️ <strong>Preview Mode:</strong> Viewing Traction Distribution (TRD / OHE) Operations (Logged in as {currentUser.name || currentUser.userId})
-          </span>
-          <button
-            type="button"
-            onClick={() => setPreviewingTraction(false)}
-            style={{
-              background: "#d97706",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              padding: "3px 10px",
-              cursor: "pointer",
-              fontWeight: 600,
-            }}
-          >
-            Return to Department Portal
-          </button>
-        </div>
+    // Traction Department -> Render Traction (TRD / OHE) Dashboard
+    if (dept === "traction" || dept === "trd" || dept === "electrical") {
+      return (
         <TractionDashboard
           user={currentUser}
           onLogout={handleLogout}
-          onReturn={() => setPreviewingTraction(false)}
+          onReturn={() => setBrowsingStandby(true)}
         />
-      </div>
-    );
+      );
+    }
   }
 
-  // 5. If browsing General Console (Live Tracking, Block Planning, System Diagnostics)
-  if (browsingGeneral) {
-    return (
-      <BrowserRouter>
-        <div
-          style={{
-            background: "#0b2545",
-            color: "#fff",
-            padding: "8px 24px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            fontSize: "13px",
-          }}
-        >
-          <span>
-            🚆 <strong>General Multi-Corridor Console</strong> — Logged in as:{" "}
-            <strong>{currentUser.name || currentUser.userId}</strong> (
-            {currentUser.department?.toUpperCase()})
-          </span>
-          <div style={{ display: "flex", gap: "10px" }}>
-            <button
-              type="button"
-              onClick={() => setBrowsingGeneral(false)}
-              style={{
-                background: "#1e293b",
-                color: "#fff",
-                border: "1px solid #475569",
-                borderRadius: "4px",
-                padding: "4px 12px",
-                cursor: "pointer",
-              }}
-            >
-              Back to Department Portal
-            </button>
-            <button
-              type="button"
-              onClick={handleLogout}
-              style={{
-                background: "#c8102e",
-                color: "#fff",
-                border: "none",
-                borderRadius: "4px",
-                padding: "4px 12px",
-                cursor: "pointer",
-                fontWeight: 600,
-              }}
-            >
-              Sign Out
-            </button>
-          </div>
-        </div>
-        <MainLayout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/live-tracking" element={<LiveTracking />} />
-            <Route path="/block-planning" element={<BlockPlanning />} />
-            <Route path="/coming-soon" element={<ComingSoon />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </MainLayout>
-      </BrowserRouter>
-    );
-  }
-
-  // 6. Department Standby Portal (with options to preview Engineering, Traction, S&T, and General Block Console)
+  // 5. General Multi-Corridor Console with MainLayout and Full Routing
   return (
-    <DepartmentStandby
-      user={currentUser}
-      onLogout={handleLogout}
-      onPreviewST={() => setPreviewingST(true)}
-      onPreviewEngineering={() => setPreviewingEngineering(true)}
-      onPreviewTraction={() => setPreviewingTraction(true)}
-      onOpenGeneral={() => setBrowsingGeneral(true)}
-    />
+    <BrowserRouter>
+      <MainLayout user={currentUser} onLogout={handleLogout}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/live-tracking" element={<LiveTracking />} />
+          <Route path="/block-planning" element={<BlockPlanning />} />
+          <Route path="/coming-soon" element={<ComingSoon />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </MainLayout>
+    </BrowserRouter>
   );
 }
 
