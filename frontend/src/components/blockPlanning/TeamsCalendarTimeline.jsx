@@ -590,13 +590,6 @@ export default function TeamsCalendarTimeline() {
         />
       )}
 
-      {/* ── Thin icon bar (52 px) ── */}
-      <div style={{ width:52, flexShrink:0, background:NAVY, display:'flex', flexDirection:'column', alignItems:'center', paddingTop:12, gap:14, borderRadius:'0 12px 12px 0', boxShadow:'2px 0 14px rgba(0,26,51,.25)' }}>
-        <div style={{ width:34, height:34, borderRadius:9, background:`linear-gradient(135deg,${BLUE_M},#0ea5e9)`, display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontWeight:900, fontSize:11, boxShadow:'0 2px 8px rgba(37,99,235,.4)' }}>SS</div>
-        <NavIcon label="Home"     icon="🏠" />
-        <NavIcon label="Planning" icon="📅" active />
-        <NavIcon label="Reports"  icon="📊" />
-      </div>
 
       {/* ── Main content ── */}
       <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden', minWidth:0, background:'#fff' }}>
