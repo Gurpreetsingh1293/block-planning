@@ -1,7 +1,7 @@
 /**
  * API Client for SIH Block Planning Backend
  */
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? 'https://block-planning-backend.onrender.com' : '');
 
 /**
  * Performs a health check request to GET /api/health
@@ -41,9 +41,18 @@ export async function loginUser({ userId, password, department }) {
     body: JSON.stringify({ userId, password, department }),
   });
 
-  const data = await response.json();
+  let data;
+  try {
+    data = await response.json();
+  } catch (err) {
+    if (!response.ok) {
+      throw new Error(`Backend returned status ${response.status} (${response.statusText}). If the server was sleeping, please wait a moment and try again.`);
+    }
+    throw new Error('Invalid response received from authentication server.');
+  }
+
   if (!response.ok) {
-    throw new Error(data.message || 'Login failed. Please check your credentials.');
+    throw new Error(data?.message || 'Login failed. Please check your credentials.');
   }
 
   // Store session in localStorage
