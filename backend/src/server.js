@@ -8,6 +8,7 @@ const { Server } = require('socket.io');
 const connectDB = require('./config/db');
 const apiRoutes = require('./routes');
 const blocksRoutes = require('./routes/blocks.routes');
+const trainRoutes = require('./routes/trainRoutes');
 
 const app = express();
 const server = http.createServer(app);
@@ -88,6 +89,9 @@ app.get('/', (req, res) => {
 // Blocks API (new mission-spec routes)
 app.use('/api/blocks', blocksRoutes);
 
+// Train Telemetry & Live Tracking Routes (RailRadar Provider)
+app.use('/api/trains', trainRoutes);
+
 // Legacy API Routes
 app.use('/api', apiRoutes);
 
@@ -108,6 +112,16 @@ app.use((err, req, res, next) => {
 });
 
 // ─── Start Server ────────────────────────────────────────────────────────────
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`\n❌ [Server Error] Port ${PORT} is already in use by another process.`);
+    console.error(`👉 If nodemon crashed, wait a moment or kill the lingering process on port ${PORT}.\n`);
+    process.exit(1);
+  } else {
+    console.error('[Server Error]:', err);
+  }
+});
+
 server.listen(PORT, () => {
   console.log(`====================================================`);
   console.log(`🚆 Setu Sutra Block Planning Backend — Port ${PORT}`);

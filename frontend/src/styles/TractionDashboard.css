@@ -1,210 +1,395 @@
 /* =====================================================
    TractionDashboard.css
-   Indian Railways Traction Distribution (TRD / OHE) Dashboard
+   Indian Railways Traction Distribution (TRD / Electrical / OHE) Dashboard
+   Visual Language & Components Strictly Aligned with S&T Design System
    ===================================================== */
 
-.trd-dashboard {
-  min-height: 100vh;
-  background: var(--bg-app, #f4f6f9);
-  color: var(--text-primary, #0b2545);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  display: flex;
-  flex-direction: column;
+@keyframes pulseGreen {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
 }
 
-/* Top Navbar */
-.trd-navbar {
-  background: #0b2545;
-  color: #ffffff;
-  padding: 10px 24px;
+.spin-animation {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Sidebar Custom Elements -------------------------------------------------- */
+
+.sidebar-dept-tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+.trd-dept-pill {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid rgba(217, 119, 6, 0.25);
+}
+
+.dept-tag-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.trd-dot {
+  background: #d97706;
+}
+
+.sidebar-dept-telemetry {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  border-bottom: 2px solid #f59e0b;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 5px 8px;
+  border-radius: 6px;
 }
 
-.trd-navbar-brand {
+.trd-telemetry {
+  color: #d97706;
+  background: #fffbeb;
+  border: 1px solid rgba(217, 119, 6, 0.15);
+}
+
+/* Top Navbar & Header Extensions ------------------------------------------- */
+
+.st-mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--st-navy, #0b2e4f);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.st-navbar-portal-btn {
+  background: #f1f5f9;
+  color: var(--st-navy, #0b2e4f);
+  border: 1px solid var(--st-border, #d8dee5);
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.15s ease;
+}
+
+.st-navbar-portal-btn:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+}
+
+.st-header-controls {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.trd-navbar-mark {
-  width: 36px;
-  height: 36px;
-  background: #f59e0b;
-  color: #0b2545;
+.st-station-select-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--st-text-muted, #5b6b7a);
+}
+
+.st-station-select {
+  padding: 6px 12px;
   border-radius: 6px;
+  border: 1px solid var(--st-border, #d8dee5);
+  background: var(--st-surface, #ffffff);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--st-navy, #0b2e4f);
+  cursor: pointer;
+  outline: none;
+}
+
+.st-station-select:focus {
+  border-color: #d97706;
+}
+
+.st-btn-refresh {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  background: #f1f5f9;
+  color: var(--st-navy, #0b2e4f);
+  border: 1px solid var(--st-border, #d8dee5);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.st-btn-refresh:hover:not(:disabled) {
+  background: #e2e8f0;
+}
+
+.st-btn-refresh:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Timetable Workspace ------------------------------------------------------ */
+
+.trd-timetable-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.trd-tab-workspace {
+  min-height: 500px;
+}
+
+/* Summary KPI Stats Strip */
+.trd-stats-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.trd-stat-card {
+  background: #ffffff;
+  border: 1px solid var(--st-border, #d8dee5);
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.trd-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.trd-stat-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 900;
-  font-size: 14px;
-  letter-spacing: 0.05em;
-  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.35);
+  flex-shrink: 0;
 }
 
-.trd-navbar-titles {
+.trd-stat-details {
   display: flex;
   flex-direction: column;
 }
 
-.trd-navbar-title {
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: #ffffff;
+.trd-stat-val {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--st-navy, #0b2e4f);
+  line-height: 1.1;
+  font-family: var(--font-mono, monospace);
 }
 
-.trd-navbar-subtitle {
-  font-size: 11px;
-  color: #fde68a;
-  font-weight: 500;
+.trd-stat-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--st-text-muted, #5b6b7a);
+  margin-top: 3px;
 }
 
-/* Layout with Left Sidebar */
-.trd-layout-body {
-  display: flex;
-  flex: 1;
-  min-height: calc(100vh - 62px);
-  background: var(--bg-app, #f4f6f9);
-}
-
-.trd-sidebar {
-  width: 240px;
-  min-width: 240px;
+/* Search & Filter Toolbar */
+.trd-timetable-toolbar {
   background: #ffffff;
-  border-right: 1px solid #e2e8f0;
+  border: 1px solid var(--st-border, #d8dee5);
+  border-radius: 10px;
+  padding: 14px 18px;
   display: flex;
   flex-direction: column;
-  padding: 20px 12px;
-  gap: 6px;
-  box-shadow: 1px 0 6px rgba(11, 37, 69, 0.03);
+  gap: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
-.trd-sidebar-section-title {
-  font-size: 11px;
-  font-weight: 700;
-  color: #94a3b8;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 0 12px 8px;
-}
-
-.trd-sidebar-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.trd-sidebar-tab {
+.trd-search-box {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 11px 14px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #475569;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  text-align: left;
   width: 100%;
 }
 
-.trd-sidebar-tab:hover {
-  background: #fef3c7;
-  color: #92400e;
+.trd-search-icon {
+  position: absolute;
+  left: 14px;
+  color: #94a3b8;
+  pointer-events: none;
 }
 
-.trd-sidebar-tab.active {
-  background: #fef3c7;
-  color: #b45309;
-  font-weight: 700;
-  border-left: 3px solid #d97706;
-  border-radius: 0 8px 8px 0;
+.trd-search-input {
+  width: 100%;
+  padding: 10px 38px 10px 42px;
+  background: #f8fafc;
+  border: 1px solid var(--st-border, #d8dee5);
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: #1e293b;
+  outline: none;
+  transition: all 0.2s;
 }
 
-.trd-content-canvas {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
+.trd-search-input:focus {
+  background: #ffffff;
+  border-color: #d97706;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.12);
 }
 
-/* Officer Meta & Actions */
-.trd-navbar-actions {
+.trd-search-clear {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.trd-filters-group {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
   gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid #f1f5f9;
 }
 
-.trd-officer-pill {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  padding: 4px 12px;
+.trd-category-pills,
+.trd-direction-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.trd-filter-pill,
+.trd-dir-pill {
+  padding: 6px 14px;
+  background: #f8fafc;
+  border: 1px solid var(--st-border, #d8dee5);
   border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--st-text-muted, #5b6b7a);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.trd-filter-pill:hover,
+.trd-dir-pill:hover {
+  background: #f1f5f9;
+  color: var(--st-navy, #0b2e4f);
+}
+
+.trd-filter-pill.active {
+  background: #0b2e4f;
+  color: #ffffff;
+  border-color: #0b2e4f;
+}
+
+.trd-dir-pill.active {
+  background: #fef3c7;
+  color: #b45309;
+  border-color: #d97706;
+  font-weight: 700;
+}
+
+/* Empty States */
+.trd-empty-state {
+  background: #ffffff;
+  border: 1px dashed var(--st-border, #d8dee5);
+  border-radius: 10px;
+  padding: 48px 24px;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
-.trd-officer-name {
-  font-size: 12px;
-  font-weight: 600;
-  color: #ffffff;
+.trd-empty-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--st-navy, #0b2e4f);
+  margin-top: 12px;
+  margin-bottom: 4px;
 }
 
-.trd-officer-dept {
-  font-size: 10px;
-  color: #fbbf24;
+.trd-empty-subtitle {
+  font-size: 0.82rem;
+  color: var(--st-text-muted, #5b6b7a);
 }
 
-.trd-btn-portal {
-  background: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 6px;
-  padding: 6px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
+/* Timetable Cards List */
+.trd-timetable-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.trd-btn-portal:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.trd-btn-logout {
-  background: transparent;
-  color: #fca5a5;
-  border: 1px solid rgba(239, 68, 68, 0.35);
-  border-radius: 6px;
-  padding: 6px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.trd-btn-logout:hover {
-  background: #dc2626;
-  color: #ffffff;
-  border-color: #dc2626;
-}
-
-/* Header Banner */
-.trd-header-banner {
+.trd-train-card {
   background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
-  padding: 16px 24px;
+  border: 1px solid var(--st-border, #d8dee5);
+  border-radius: 10px;
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.trd-train-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+.trd-card-delayed {
+  border-left: 4px solid #ef4444;
+}
+
+.trd-card-expanded {
+  border-color: #d97706;
+  box-shadow: 0 6px 18px rgba(217, 119, 6, 0.08);
+}
+
+/* Train Card Header */
+.trd-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -212,177 +397,349 @@
   gap: 12px;
 }
 
-.trd-header-title-group h1 {
-  font-size: 20px;
-  font-weight: 700;
-  color: #0b2545;
-  margin: 0 0 2px 0;
+.trd-train-identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.trd-header-title-group p {
-  font-size: 13px;
-  color: #64748b;
+.trd-train-num-badge {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.88rem;
+  font-weight: 700;
+  background: #f1f5f9;
+  border: 1px solid var(--st-border, #d8dee5);
+  color: var(--st-navy, #0b2e4f);
+  padding: 4px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.03em;
+}
+
+.trd-train-names {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.trd-train-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--st-navy, #0b2e4f);
   margin: 0;
 }
 
-.trd-header-meta {
+.trd-train-badges {
   display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.trd-status-badge {
-  background: #ecfdf5;
-  color: #047857;
-  border: 1px solid #a7f3d0;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 700;
-  display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
-/* Main Content Area */
-.trd-main-content {
-  flex: 1;
-  max-width: 1240px;
-  width: 100%;
-  margin: 20px auto;
-  padding: 0 20px 40px;
-}
-
-/* Metrics Grid */
-.trd-metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.trd-metric-card {
-  background: #ffffff;
-  border-radius: 10px;
+.trd-category-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748b;
+  background: #f8fafc;
   border: 1px solid #e2e8f0;
-  padding: 18px 20px;
-  box-shadow: 0 2px 6px rgba(11, 37, 69, 0.04);
-  display: flex;
-  flex-direction: column;
+  padding: 2px 7px;
+  border-radius: 4px;
 }
 
-.trd-metric-head {
+.trd-type-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.trd-type-badge.arrival {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.trd-type-badge.departure {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.trd-header-right-badges {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-.trd-metric-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.trd-metric-value {
-  font-size: 22px;
-  font-weight: 800;
-  color: #0b2545;
-  margin-bottom: 4px;
-}
-
-.trd-metric-sub {
-  font-size: 12px;
-  color: #059669;
-  font-weight: 600;
-}
-
-/* OHE Sector Grid */
-.trd-section-card {
-  background: #ffffff;
-  border-radius: 10px;
-  border: 1px solid #e2e8f0;
-  padding: 20px;
-  margin-bottom: 24px;
-  box-shadow: 0 2px 6px rgba(11, 37, 69, 0.04);
-}
-
-.trd-section-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: #0b2545;
-  margin: 0 0 6px 0;
-}
-
-.trd-section-desc {
-  font-size: 13px;
-  color: #64748b;
-  margin: 0 0 16px 0;
-}
-
-.trd-ohe-sectors-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 14px;
-}
-
-.trd-sector-item {
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 14px;
-  background: #f8fafc;
-  display: flex;
-  flex-direction: column;
   gap: 8px;
 }
 
-.trd-sector-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.trd-sector-name {
-  font-size: 13px;
+.trd-platform-badge {
+  font-size: 0.75rem;
   font-weight: 700;
-  color: #0b2545;
+  background: #f8fafc;
+  border: 1px solid var(--st-border, #d8dee5);
+  color: var(--st-navy, #0b2e4f);
+  padding: 4px 10px;
+  border-radius: 6px;
 }
 
-.trd-sector-voltage {
-  font-size: 13px;
-  font-weight: 800;
-  color: #0284c7;
+.trd-delay-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+/* Train Card Body (Journey Route & Timings) */
+.trd-card-body {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: center;
+  padding: 12px 0;
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.trd-journey-visualizer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.trd-station-point {
+  display: flex;
+  flex-direction: column;
+  min-width: 65px;
+}
+
+.trd-station-point.end {
+  text-align: right;
+}
+
+.trd-stn-code {
   font-family: var(--font-mono, monospace);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--st-navy, #0b2e4f);
 }
 
-.trd-sector-row {
+.trd-stn-time {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--st-text-muted, #5b6b7a);
+}
+
+.trd-journey-track {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.trd-journey-duration {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #d97706;
+}
+
+.trd-track-line-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 4px;
+}
+
+.trd-track-node {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #d97706;
+  flex-shrink: 0;
+}
+
+.trd-track-rail {
+  flex: 1;
+  height: 2px;
+  background: #cbd5e1;
+}
+
+.trd-track-arrow-icon {
+  color: #d97706;
+  flex-shrink: 0;
+}
+
+.trd-journey-meta {
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
+/* Station Timings Box */
+.trd-station-timings-box {
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid var(--st-border, #d8dee5);
+  border-radius: 8px;
+  padding: 8px 16px;
+  gap: 16px;
+}
+
+.trd-time-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.trd-time-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.05em;
+}
+
+.trd-time-val {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--st-navy, #0b2e4f);
+}
+
+.trd-time-val.muted {
+  color: #cbd5e1;
+}
+
+.trd-time-divider {
+  width: 1px;
+  height: 26px;
+  background: var(--st-border, #d8dee5);
+}
+
+/* Train Card Footer */
+.trd-card-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.trd-service-days-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trd-footer-label {
+  font-size: 0.72rem;
+  font-weight: 600;
   color: #64748b;
 }
 
-.trd-sector-status-ok {
-  color: #059669;
-  font-weight: 600;
+.trd-days-list {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.trd-sector-status-block {
+.trd-day-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: #f1f5f9;
+  color: #94a3b8;
+}
+
+.trd-day-dot.active {
+  background: #d97706;
+  color: #ffffff;
+}
+
+.trd-remarks-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.trd-remarks-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.trd-btn-details-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
   color: #d97706;
-  font-weight: 600;
+  background: #fffbeb;
+  border: 1px solid rgba(217, 119, 6, 0.2);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
 }
 
-@media (max-width: 768px) {
-  .trd-navbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+.trd-btn-details-toggle:hover {
+  background: #fef3c7;
+}
+
+/* Expandable Operational Telemetry Drawer */
+.trd-expanded-drawer {
+  background: #f8fafc;
+  border: 1px solid var(--st-border, #d8dee5);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 4px;
+}
+
+.trd-drawer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.trd-drawer-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.trd-drawer-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.trd-drawer-val {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.trd-drawer-val.text-amber {
+  color: #d97706;
+}
+
+.trd-drawer-val.text-green {
+  color: #16a34a;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 900px) {
+  .st-mobile-menu-toggle {
+    display: inline-flex;
   }
-  .trd-navbar-actions {
-    width: 100%;
-    justify-content: space-between;
+  .trd-card-body {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 }

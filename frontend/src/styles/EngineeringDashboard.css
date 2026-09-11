@@ -1,646 +1,745 @@
 /* =====================================================
    EngineeringDashboard.css
    Indian Railways Engineering (Civil / Track P-Way) Dashboard
+   Visual Language & Components Strictly Aligned with S&T Design System
    ===================================================== */
 
-.eng-dashboard {
-  min-height: 100vh;
-  background: var(--bg-app, #f4f6f9);
-  color: var(--text-primary, #0b2545);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  display: flex;
-  flex-direction: column;
+@keyframes pulseGreen {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
 }
 
-/* Top Navbar */
-.eng-navbar {
-  background: #0b2545;
-  color: #ffffff;
-  padding: 10px 24px;
+.spin-animation {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Sidebar Custom Elements -------------------------------------------------- */
+
+.sidebar-dept-tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+.eng-dept-pill {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid rgba(2, 132, 199, 0.25);
+}
+
+.dept-tag-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.eng-dot {
+  background: #0284c7;
+}
+
+.sidebar-dept-telemetry {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  border-bottom: 2px solid #0284c7;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 5px 8px;
+  border-radius: 6px;
 }
 
-.eng-navbar-brand {
+.eng-telemetry {
+  color: #0284c7;
+  background: #f0f9ff;
+  border: 1px solid rgba(2, 132, 199, 0.15);
+}
+
+/* Top Navbar & Header Extensions ------------------------------------------- */
+
+.st-mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--st-navy, #0b2e4f);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.st-navbar-portal-btn {
+  background: #f1f5f9;
+  color: var(--st-navy, #0b2e4f);
+  border: 1px solid var(--st-border, #d8dee5);
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.15s ease;
+}
+
+.st-navbar-portal-btn:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+}
+
+.st-header-controls {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.eng-navbar-mark {
-  width: 36px;
-  height: 36px;
-  background: #0284c7;
-  color: #ffffff;
+.st-station-select-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--st-text-muted, #5b6b7a);
+}
+
+.st-station-select {
+  padding: 6px 12px;
   border-radius: 6px;
+  border: 1px solid var(--st-border, #d8dee5);
+  background: var(--st-surface, #ffffff);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--st-navy, #0b2e4f);
+  cursor: pointer;
+  outline: none;
+}
+
+.st-station-select:focus {
+  border-color: var(--st-blue, #1e5aa8);
+}
+
+.st-btn-refresh {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  background: #f1f5f9;
+  color: var(--st-navy, #0b2e4f);
+  border: 1px solid var(--st-border, #d8dee5);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.st-btn-refresh:hover:not(:disabled) {
+  background: #e2e8f0;
+}
+
+.st-btn-refresh:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Timetable Workspace ------------------------------------------------------ */
+
+.eng-timetable-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.eng-tab-workspace {
+  min-height: 500px;
+}
+
+/* Summary KPI Stats Strip */
+.eng-stats-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.eng-stat-card {
+  background: #ffffff;
+  border: 1px solid var(--st-border, #d8dee5);
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.eng-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.eng-stat-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
+
+.eng-stat-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.eng-stat-val {
+  font-size: 1.5rem;
   font-weight: 800;
-  font-size: 14px;
-  letter-spacing: 0.05em;
-  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+  color: var(--st-navy, #0b2e4f);
+  line-height: 1.1;
+  font-family: var(--font-mono, monospace);
 }
 
-.eng-navbar-titles {
-  display: flex;
-  flex-direction: column;
+.eng-stat-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--st-text-muted, #5b6b7a);
+  margin-top: 3px;
 }
 
-.eng-navbar-title {
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: #ffffff;
-}
-
-.eng-navbar-subtitle {
-  font-size: 11px;
-  color: #93c5fd;
-  font-weight: 500;
-}
-
-/* Layout with Left Sidebar */
-.eng-layout-body {
-  display: flex;
-  flex: 1;
-  min-height: calc(100vh - 62px);
-  background: var(--bg-app, #f4f6f9);
-}
-
-.eng-sidebar {
-  width: 240px;
-  min-width: 240px;
+/* Search & Filter Toolbar */
+.eng-timetable-toolbar {
   background: #ffffff;
-  border-right: 1px solid #e2e8f0;
+  border: 1px solid var(--st-border, #d8dee5);
+  border-radius: 10px;
+  padding: 14px 18px;
   display: flex;
   flex-direction: column;
-  padding: 20px 12px;
-  gap: 6px;
-  box-shadow: 1px 0 6px rgba(11, 37, 69, 0.03);
-}
-
-.eng-sidebar-section-title {
-  font-size: 11px;
-  font-weight: 700;
-  color: #94a3b8;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 0 12px 8px;
-}
-
-.eng-sidebar-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.eng-sidebar-tab {
-  display: flex;
-  align-items: center;
   gap: 12px;
-  padding: 11px 14px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #475569;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  text-align: left;
-  width: 100%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
-.eng-sidebar-tab:hover {
-  background: #f1f5f9;
-  color: #0b2545;
-}
-
-.eng-sidebar-tab.active {
-  background: #e0f2fe;
-  color: #0284c7;
-  font-weight: 700;
-  border-left: 3px solid #0284c7;
-  border-radius: 0 8px 8px 0;
-}
-
-.eng-content-canvas {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Officer Meta & Actions */
-.eng-navbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.eng-officer-pill {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  padding: 4px 12px;
-  border-radius: 6px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.eng-officer-name {
-  font-size: 12px;
-  font-weight: 600;
-  color: #ffffff;
-}
-
-.eng-officer-dept {
-  font-size: 10px;
-  color: #38bdf8;
-}
-
-.eng-btn-portal {
-  background: rgba(255, 255, 255, 0.12);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 6px;
-  padding: 6px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.eng-btn-portal:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.eng-btn-logout {
-  background: transparent;
-  color: #fca5a5;
-  border: 1px solid rgba(239, 68, 68, 0.35);
-  border-radius: 6px;
-  padding: 6px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.eng-btn-logout:hover {
-  background: #dc2626;
-  color: #ffffff;
-  border-color: #dc2626;
-}
-
-/* Sub-header banner */
-.eng-header-banner {
-  background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
-  padding: 16px 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.eng-header-title-group h1 {
-  font-size: 20px;
-  font-weight: 700;
-  color: #0b2545;
-  margin: 0 0 2px 0;
-}
-
-.eng-header-title-group p {
-  font-size: 13px;
-  color: #64748b;
-  margin: 0;
-}
-
-.eng-header-controls {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.eng-station-select-box {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #f8fafc;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  padding: 6px 12px;
-}
-
-.eng-station-select-box label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #475569;
-  text-transform: uppercase;
-}
-
-.eng-station-select {
-  background: transparent;
-  border: none;
-  font-size: 13px;
-  font-weight: 700;
-  color: #0b2545;
-  cursor: pointer;
-  outline: none;
-}
-
-/* Main Content Area */
-.eng-main-content {
-  flex: 1;
-  max-width: 1240px;
-  width: 100%;
-  margin: 20px auto;
-  padding: 0 20px 40px;
-}
-
-/* Timetable Filter Bar */
-.eng-timetable-filter-bar {
-  background: #ffffff;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  padding: 12px 18px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  box-shadow: 0 1px 4px rgba(11, 37, 69, 0.03);
-}
-
-.eng-search-input-wrapper {
+.eng-search-box {
   position: relative;
-  flex: 1;
-  min-width: 260px;
-  max-width: 420px;
-}
-
-.eng-search-input {
+  display: flex;
+  align-items: center;
   width: 100%;
-  padding: 8px 12px 8px 36px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 13px;
-  color: #0b2545;
-  outline: none;
-  transition: border-color 0.15s ease;
-}
-
-.eng-search-input:focus {
-  border-color: #0284c7;
-  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
 }
 
 .eng-search-icon {
   position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
+  left: 14px;
   color: #94a3b8;
+  pointer-events: none;
 }
 
-.eng-filter-pills {
+.eng-search-input {
+  width: 100%;
+  padding: 10px 38px 10px 42px;
+  background: #f8fafc;
+  border: 1px solid var(--st-border, #d8dee5);
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: #1e293b;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.eng-search-input:focus {
+  background: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+}
+
+.eng-search-clear {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.eng-filters-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.eng-category-pills,
+.eng-direction-pills {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.eng-filter-pill {
-  padding: 5px 12px;
-  border-radius: 16px;
-  font-size: 12px;
-  font-weight: 600;
-  border: 1px solid #e2e8f0;
+.eng-filter-pill,
+.eng-dir-pill {
+  padding: 6px 14px;
   background: #f8fafc;
-  color: #64748b;
+  border: 1px solid var(--st-border, #d8dee5);
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--st-text-muted, #5b6b7a);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
-.eng-filter-pill:hover {
-  border-color: #cbd5e1;
-  color: #0b2545;
+.eng-filter-pill:hover,
+.eng-dir-pill:hover {
+  background: #f1f5f9;
+  color: var(--st-navy, #0b2e4f);
 }
 
 .eng-filter-pill.active {
-  background: #0b2545;
+  background: #0b2e4f;
   color: #ffffff;
-  border-color: #0b2545;
+  border-color: #0b2e4f;
+}
+
+.eng-dir-pill.active {
+  background: #e0f2fe;
+  color: #0284c7;
+  border-color: #0284c7;
+  font-weight: 700;
+}
+
+/* Empty States */
+.eng-empty-state {
+  background: #ffffff;
+  border: 1px dashed var(--st-border, #d8dee5);
+  border-radius: 10px;
+  padding: 48px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.eng-empty-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--st-navy, #0b2e4f);
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+
+.eng-empty-subtitle {
+  font-size: 0.82rem;
+  color: var(--st-text-muted, #5b6b7a);
 }
 
 /* Timetable Cards List */
-.eng-timetable-list {
+.eng-timetable-cards {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
-/* Horizontal Train Timetable Card */
 .eng-train-card {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--st-border, #d8dee5);
   border-radius: 10px;
-  padding: 16px 20px;
-  box-shadow: 0 2px 6px rgba(11, 37, 69, 0.04);
-  transition: all 0.15s ease;
-  position: relative;
-  overflow: hidden;
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .eng-train-card:hover {
-  border-color: #93c5fd;
-  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.1);
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
 }
 
-.eng-train-card::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: #0284c7;
+.eng-card-delayed {
+  border-left: 4px solid #ef4444;
 }
 
-.eng-train-card.delayed::before {
-  background: #f59e0b;
+.eng-card-expanded {
+  border-color: #0284c7;
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.08);
 }
 
-/* Card Top Section: Train Identity + Station Arrival/Departure */
-.eng-train-header {
+/* Train Card Header */
+.eng-card-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #f1f5f9;
-  padding-bottom: 12px;
-  margin-bottom: 14px;
-  gap: 16px;
   flex-wrap: wrap;
+  gap: 12px;
 }
 
 .eng-train-identity {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
-.eng-train-num {
-  font-size: 15px;
-  font-weight: 800;
-  color: #0b2545;
+.eng-train-num-badge {
   font-family: var(--font-mono, monospace);
+  font-size: 0.88rem;
+  font-weight: 700;
   background: #f1f5f9;
-  padding: 3px 8px;
-  border-radius: 4px;
-  border: 1px solid #e2e8f0;
-}
-
-.eng-train-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: #0b2545;
-  letter-spacing: 0.01em;
-}
-
-.eng-train-category-tag {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 12px;
-  background: #e0f2fe;
-  color: #0369a1;
-}
-
-/* Arrival / Departure columns on the right */
-.eng-station-timings {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-}
-
-.eng-timing-col {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.eng-timing-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 2px;
-}
-
-.eng-timing-value {
-  font-size: 15px;
-  font-weight: 700;
-  color: #0b2545;
-  font-family: var(--font-mono, monospace);
-}
-
-.eng-timing-value.none {
-  color: #94a3b8;
-  font-weight: 500;
-}
-
-/* Card Body Section: Journey Progression Diagram */
-.eng-journey-diagram {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 20px;
-  padding: 6px 0 14px;
-}
-
-.eng-journey-start {
-  display: flex;
-  flex-direction: column;
-}
-
-.eng-journey-station-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.eng-journey-time {
-  font-size: 16px;
-  font-weight: 700;
-  color: #0b2545;
-  font-family: var(--font-mono, monospace);
-  margin-top: 2px;
-}
-
-/* Center Duration & Distance Bar */
-.eng-journey-mid {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 220px;
-  padding: 0 10px;
-}
-
-.eng-journey-duration-label {
-  font-size: 10px;
-  font-weight: 600;
-  color: #64748b;
-  text-transform: uppercase;
+  border: 1px solid var(--st-border, #d8dee5);
+  color: var(--st-navy, #0b2e4f);
+  padding: 4px 10px;
+  border-radius: 6px;
   letter-spacing: 0.03em;
 }
 
-.eng-journey-duration-val {
-  font-size: 13px;
-  font-weight: 700;
-  color: #0284c7;
-  margin: 1px 0;
+.eng-train-names {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
-.eng-journey-track-line {
-  position: relative;
-  width: 100%;
-  height: 2px;
-  background: #cbd5e1;
-  margin: 4px 0;
+.eng-train-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--st-navy, #0b2e4f);
+  margin: 0;
+}
+
+.eng-train-badges {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 6px;
+}
+
+.eng-category-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748b;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.eng-type-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.eng-type-badge.arrival {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.eng-type-badge.departure {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.eng-header-right-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.eng-platform-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: #f8fafc;
+  border: 1px solid var(--st-border, #d8dee5);
+  color: var(--st-navy, #0b2e4f);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.eng-delay-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+/* Train Card Body (Journey Route & Timings) */
+.eng-card-body {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: center;
+  padding: 12px 0;
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.eng-journey-visualizer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.eng-station-point {
+  display: flex;
+  flex-direction: column;
+  min-width: 65px;
+}
+
+.eng-station-point.end {
+  text-align: right;
+}
+
+.eng-stn-code {
+  font-family: var(--font-mono, monospace);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--st-navy, #0b2e4f);
+}
+
+.eng-stn-time {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--st-text-muted, #5b6b7a);
+}
+
+.eng-journey-track {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.eng-journey-duration {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #0284c7;
+}
+
+.eng-track-line-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 4px;
 }
 
 .eng-track-node {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: #0284c7;
+  flex-shrink: 0;
 }
 
-.eng-track-arrow {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+.eng-track-rail {
+  flex: 1;
+  height: 2px;
+  background: #cbd5e1;
+}
+
+.eng-track-arrow-icon {
   color: #0284c7;
-  font-size: 10px;
-  background: #ffffff;
-  padding: 0 4px;
+  flex-shrink: 0;
 }
 
-.eng-journey-meta-sub {
-  font-size: 11px;
-  color: #64748b;
-  font-weight: 500;
+.eng-journey-meta {
+  font-size: 0.7rem;
+  color: #94a3b8;
 }
 
-.eng-journey-end {
+/* Station Timings Box */
+.eng-station-timings-box {
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid var(--st-border, #d8dee5);
+  border-radius: 8px;
+  padding: 8px 16px;
+  gap: 16px;
+}
+
+.eng-time-block {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
 }
 
-/* Card Bottom Section: Service Days & Operational Badges */
-.eng-card-bottom {
+.eng-time-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.05em;
+}
+
+.eng-time-val {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--st-navy, #0b2e4f);
+}
+
+.eng-time-val.muted {
+  color: #cbd5e1;
+}
+
+.eng-time-divider {
+  width: 1px;
+  height: 26px;
+  background: var(--st-border, #d8dee5);
+}
+
+/* Train Card Footer */
+.eng-card-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid #f8fafc;
-  padding-top: 12px;
-  gap: 16px;
   flex-wrap: wrap;
+  gap: 12px;
 }
 
-.eng-service-days-group {
+.eng-service-days-wrap {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
-.eng-service-days-label {
-  font-size: 12px;
+.eng-footer-label {
+  font-size: 0.72rem;
   font-weight: 600;
   color: #64748b;
 }
 
-.eng-service-days-chips {
+.eng-days-list {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.eng-day-circle {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
+.eng-day-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 0.65rem;
   font-weight: 700;
   background: #f1f5f9;
   color: #94a3b8;
-  border: 1px solid #e2e8f0;
 }
 
-.eng-day-circle.active {
-  background: #e0f2fe;
-  color: #0284c7;
-  border-color: #7dd3fc;
+.eng-day-dot.active {
+  background: #0284c7;
+  color: #ffffff;
 }
 
-.eng-card-badges {
+.eng-remarks-wrap {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
 }
 
-.eng-pf-pill {
-  font-size: 12px;
-  font-weight: 700;
-  background: #f1f5f9;
+.eng-remarks-text {
+  font-size: 0.75rem;
+  font-weight: 600;
   color: #334155;
-  padding: 3px 10px;
-  border-radius: 4px;
-  border: 1px solid #cbd5e1;
 }
 
-/* Responsive Rules */
-@media (max-width: 840px) {
-  .eng-navbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+.eng-btn-details-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #0284c7;
+  background: #f0f9ff;
+  border: 1px solid rgba(2, 132, 199, 0.2);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.eng-btn-details-toggle:hover {
+  background: #e0f2fe;
+}
+
+/* Expandable Operational Telemetry Drawer */
+.eng-expanded-drawer {
+  background: #f8fafc;
+  border: 1px solid var(--st-border, #d8dee5);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 4px;
+}
+
+.eng-drawer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.eng-drawer-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.eng-drawer-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.eng-drawer-val {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.eng-drawer-val.text-blue {
+  color: #0284c7;
+}
+
+.eng-drawer-val.text-green {
+  color: #16a34a;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 900px) {
+  .st-mobile-menu-toggle {
+    display: inline-flex;
   }
-  .eng-navbar-actions {
-    width: 100%;
-    justify-content: space-between;
-  }
-  .eng-journey-diagram {
+  .eng-card-body {
     grid-template-columns: 1fr;
-    gap: 12px;
-    text-align: left;
-  }
-  .eng-journey-end {
-    align-items: flex-start;
-  }
-  .eng-journey-mid {
-    align-items: flex-start;
-  }
-  .eng-journey-track-line {
-    display: none;
+    gap: 16px;
   }
 }
