@@ -6,6 +6,8 @@ import LiveTracking from "./LiveTracking";
 import BlockPlanning from "./BlockPlanning";
 import ComingSoon from "./ComingSoon";
 import Dashboard from "./Dashboard";
+import AIEngine from "./AIEngine";
+import WhatIfSimulator from "./WhatIfSimulator";
 import STTrackDiagram from "../components/STDashboard/STTrackDiagram";
 import STStatusPanel from "../components/STDashboard/STStatusPanel";
 import STTrainPanel from "../components/STDashboard/STTrainPanel";
@@ -263,6 +265,8 @@ export default function STDashboard({ user, onLogout }) {
             <Route path="/home" element={<Home />} />
             <Route path="/live-tracking" element={<LiveTracking />} />
             <Route path="/block-planning" element={<BlockPlanning />} />
+            <Route path="/ai-engine" element={<AIEngine />} />
+            <Route path="/what-if" element={<WhatIfSimulator />} />
             <Route path="/coming-soon" element={<ComingSoon />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="*" element={<Navigate to="/" replace />} />

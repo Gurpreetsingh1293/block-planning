@@ -5,7 +5,8 @@ import {
   Navigation,
   Calendar,
   Sparkles,
-  Activity
+  Activity,
+  Lightbulb
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -26,9 +27,14 @@ export default function Sidebar() {
       icon: Calendar
     },
     {
-      to: '/coming-soon',
-      label: 'Coming Soon',
+      to: '/ai-engine',
+      label: 'AI Engine',
       icon: Sparkles
+    },
+    {
+      to: '/what-if',
+      label: 'What-If',
+      icon: Lightbulb
     }
   ];
 

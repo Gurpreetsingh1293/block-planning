@@ -1,0 +1,221 @@
+{
+  "trains": [
+    {
+      "trainNumber": "12001",
+      "trainName": "Shatabdi Express",
+      "trainType": "Passenger",
+      "route": "Delhi-Agra",
+      "section": "Delhi-Mathura",
+      "direction": "Down",
+      "stations": [
+        {
+          "station": "Delhi",
+          "arrivalTime": null,
+          "departureTime": "06:00",
+          "platform": "3"
+        },
+        {
+          "station": "Faridabad",
+          "arrivalTime": "06:25",
+          "departureTime": "06:27",
+          "platform": "1"
+        },
+        {
+          "station": "Mathura",
+          "arrivalTime": "08:10",
+          "departureTime": "08:15",
+          "platform": "2"
+        }
+      ],
+      "expectedOccupancy": "High",
+      "priority": "High",
+      "operatingDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    },
+    {
+      "trainNumber": "12191",
+      "trainName": "Intercity Express",
+      "trainType": "Passenger",
+      "route": "Delhi-Mathura",
+      "section": "Delhi-Mathura",
+      "direction": "Down",
+      "stations": [
+        {
+          "station": "Delhi",
+          "arrivalTime": null,
+          "departureTime": "09:15",
+          "platform": "5"
+        },
+        {
+          "station": "Faridabad",
+          "arrivalTime": "09:45",
+          "departureTime": "09:47",
+          "platform": "2"
+        },
+        {
+          "station": "Mathura",
+          "arrivalTime": "11:30",
+          "departureTime": null,
+          "platform": "1"
+        }
+      ],
+      "expectedOccupancy": "Medium",
+      "priority": "High",
+      "operatingDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    },
+    {
+      "trainNumber": "12615",
+      "trainName": "Grand Trunk Express",
+      "trainType": "Passenger",
+      "route": "Delhi-Chennai",
+      "section": "Delhi-Mathura",
+      "direction": "Down",
+      "stations": [
+        {
+          "station": "Delhi",
+          "arrivalTime": null,
+          "departureTime": "12:30",
+          "platform": "8"
+        },
+        {
+          "station": "Faridabad",
+          "arrivalTime": "13:05",
+          "departureTime": "13:07",
+          "platform": "1"
+        },
+        {
+          "station": "Mathura",
+          "arrivalTime": "15:15",
+          "departureTime": "15:20",
+          "platform": "3"
+        }
+      ],
+      "expectedOccupancy": "High",
+      "priority": "High",
+      "operatingDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    },
+    {
+      "trainNumber": "12002",
+      "trainName": "Shatabdi Express",
+      "trainType": "Passenger",
+      "route": "Agra-Delhi",
+      "section": "Delhi-Mathura",
+      "direction": "Up",
+      "stations": [
+        {
+          "station": "Mathura",
+          "arrivalTime": null,
+          "departureTime": "17:00",
+          "platform": "2"
+        },
+        {
+          "station": "Faridabad",
+          "arrivalTime": "18:42",
+          "departureTime": "18:44",
+          "platform": "1"
+        },
+        {
+          "station": "Delhi",
+          "arrivalTime": "19:10",
+          "departureTime": null,
+          "platform": "3"
+        }
+      ],
+      "expectedOccupancy": "High",
+      "priority": "High",
+      "operatingDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    },
+    {
+      "trainNumber": "12192",
+      "trainName": "Intercity Express",
+      "trainType": "Passenger",
+      "route": "Mathura-Delhi",
+      "section": "Delhi-Mathura",
+      "direction": "Up",
+      "stations": [
+        {
+          "station": "Mathura",
+          "arrivalTime": null,
+          "departureTime": "20:00",
+          "platform": "1"
+        },
+        {
+          "station": "Faridabad",
+          "arrivalTime": "21:43",
+          "departureTime": "21:45",
+          "platform": "2"
+        },
+        {
+          "station": "Delhi",
+          "arrivalTime": "22:15",
+          "departureTime": null,
+          "platform": "5"
+        }
+      ],
+      "expectedOccupancy": "Medium",
+      "priority": "High",
+      "operatingDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    },
+    {
+      "trainNumber": "12280",
+      "trainName": "Taj Express",
+      "trainType": "Passenger",
+      "route": "Delhi-Agra",
+      "section": "Delhi-Mathura",
+      "direction": "Down",
+      "stations": [
+        {
+          "station": "Delhi",
+          "arrivalTime": null,
+          "departureTime": "07:10",
+          "platform": "4"
+        },
+        {
+          "station": "Faridabad",
+          "arrivalTime": "07:40",
+          "departureTime": "07:42",
+          "platform": "1"
+        },
+        {
+          "station": "Mathura",
+          "arrivalTime": "09:30",
+          "departureTime": "09:35",
+          "platform": "2"
+        }
+      ],
+      "expectedOccupancy": "High",
+      "priority": "High",
+      "operatingDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    },
+    {
+      "trainNumber": "14311",
+      "trainName": "Bareilly Express",
+      "trainType": "Passenger",
+      "route": "Delhi-Bareilly",
+      "section": "Delhi-Mathura",
+      "direction": "Down",
+      "stations": [
+        {
+          "station": "Delhi",
+          "arrivalTime": null,
+          "departureTime": "16:45",
+          "platform": "6"
+        },
+        {
+          "station": "Faridabad",
+          "arrivalTime": "17:20",
+          "departureTime": "17:22",
+          "platform": "1"
+        },
+        {
+          "station": "Mathura",
+          "arrivalTime": "19:05",
+          "departureTime": "19:10",
+          "platform": "1"
+        }
+      ],
+      "expectedOccupancy": "Medium",
+      "priority": "Medium",
+      "operatingDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    }
+  ]
+}

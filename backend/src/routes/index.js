@@ -3,6 +3,7 @@ const router = express.Router();
 
 const healthRoutes = require('./health.routes');
 const authRoutes = require('./auth.routes');
+const aiRoutes = require('./ai.routes');
 const Section = require('../models/Section');
 const TrainSchedule = require('../models/TrainSchedule');
 const MaintenanceRequest = require('../models/MaintenanceRequest');
@@ -15,6 +16,9 @@ router.use('/health', healthRoutes);
 
 // Railway Authentication Endpoints
 router.use('/auth', authRoutes);
+
+// AI Engine Endpoints (Groq-powered optimization)
+router.use('/ai', aiRoutes);
 
 // Sections Endpoints
 router.get('/sections', async (req, res) => {

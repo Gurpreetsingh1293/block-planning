@@ -5,6 +5,8 @@ import Home from "./pages/Home";
 import LiveTracking from "./pages/LiveTracking";
 import BlockPlanning from "./pages/BlockPlanning";
 import ComingSoon from "./pages/ComingSoon";
+import AIEngine from "./pages/AIEngine";
+import WhatIfSimulator from "./pages/WhatIfSimulator";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import STDashboard from "./pages/STDashboard";
@@ -35,7 +37,7 @@ function App() {
 
   const dept = (currentUser.department || "").toLowerCase();
 
-  // 2. S&T Department -> Render Delhi-Mumbai S&T Dashboard
+  // 2. S&T Department -> Render S&T Dashboard with all routes including AI Engine
   if (dept === "snt" || dept === "signal") {
     return <STDashboard user={currentUser} onLogout={handleLogout} />;
   }
@@ -48,6 +50,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/live-tracking" element={<LiveTracking />} />
           <Route path="/block-planning" element={<BlockPlanning />} />
+          <Route path="/ai-engine" element={<AIEngine />} />
+          <Route path="/what-if" element={<WhatIfSimulator />} />
           <Route path="/coming-soon" element={<ComingSoon />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -1,0 +1,68 @@
+{
+  "goodsTrains": [
+    {
+      "trainNumber": "G-001",
+      "trainName": "Goods Freight 001",
+      "trainType": "Goods",
+      "route": "Delhi-Mathura",
+      "section": "Delhi-Mathura",
+      "direction": "Down",
+      "expectedDeparture": "11:00",
+      "expectedArrival": "14:30",
+      "expectedHalt": 0.5,
+      "corridor": "C-01",
+      "forecastConfidence": "High",
+      "cargoType": "Container",
+      "priority": "Medium",
+      "operatingDate": "2026-09-11"
+    },
+    {
+      "trainNumber": "G-002",
+      "trainName": "Goods Freight 002",
+      "trainType": "Goods",
+      "route": "Delhi-Mathura",
+      "section": "Delhi-Mathura",
+      "direction": "Down",
+      "expectedDeparture": "18:30",
+      "expectedArrival": "22:00",
+      "expectedHalt": 0.3,
+      "corridor": "C-01",
+      "forecastConfidence": "Medium",
+      "cargoType": "Coal",
+      "priority": "Low",
+      "operatingDate": "2026-09-11"
+    },
+    {
+      "trainNumber": "G-003",
+      "trainName": "Goods Freight 003",
+      "trainType": "Goods",
+      "route": "Mathura-Delhi",
+      "section": "Delhi-Mathura",
+      "direction": "Up",
+      "expectedDeparture": "03:00",
+      "expectedArrival": "06:30",
+      "expectedHalt": 0.25,
+      "corridor": "C-01",
+      "forecastConfidence": "High",
+      "cargoType": "Iron Ore",
+      "priority": "Medium",
+      "operatingDate": "2026-09-12"
+    },
+    {
+      "trainNumber": "G-004",
+      "trainName": "Goods Freight 004",
+      "trainType": "Goods",
+      "route": "Delhi-Mathura",
+      "section": "Delhi-Mathura",
+      "direction": "Down",
+      "expectedDeparture": "23:30",
+      "expectedArrival": "03:00",
+      "expectedHalt": 0.2,
+      "corridor": "C-01",
+      "forecastConfidence": "Medium",
+      "cargoType": "Grain",
+      "priority": "Low",
+      "operatingDate": "2026-09-11"
+    }
+  ]
+}

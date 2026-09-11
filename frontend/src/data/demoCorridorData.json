@@ -1,0 +1,66 @@
+{
+  "corridors": [
+    {
+      "corridorId": "C-01",
+      "name": "Delhi-Mathura Main Corridor",
+      "startStation": "Delhi",
+      "endStation": "Mathura",
+      "section": "Delhi-Mathura",
+      "length": 65,
+      "status": "Operational",
+      "trackType": "Double Line",
+      "electrified": true,
+      "maxSpeed": 130
+    }
+  ],
+  "availability": [
+    {
+      "corridorId": "C-01",
+      "date": "2026-09-11",
+      "windows": [
+        {
+          "availableFrom": "00:00",
+          "availableUntil": "05:45",
+          "status": "Available",
+          "reason": "Low traffic period",
+          "trafficDensity": "Low"
+        },
+        {
+          "availableFrom": "08:15",
+          "availableUntil": "09:10",
+          "status": "Available",
+          "reason": "Between passenger trains",
+          "trafficDensity": "Low"
+        },
+        {
+          "availableFrom": "11:35",
+          "availableUntil": "12:25",
+          "status": "Available",
+          "reason": "Between passenger trains",
+          "trafficDensity": "Medium"
+        },
+        {
+          "availableFrom": "15:25",
+          "availableUntil": "16:40",
+          "status": "Available",
+          "reason": "Between passenger trains",
+          "trafficDensity": "Low"
+        },
+        {
+          "availableFrom": "19:15",
+          "availableUntil": "19:55",
+          "status": "Available",
+          "reason": "Between passenger trains",
+          "trafficDensity": "Medium"
+        },
+        {
+          "availableFrom": "22:20",
+          "availableUntil": "23:59",
+          "status": "Available",
+          "reason": "Night maintenance window",
+          "trafficDensity": "Low"
+        }
+      ]
+    }
+  ]
+}
