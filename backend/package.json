@@ -1,6 +1,9 @@
 {
   "name": "sih-block-planning-backend",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "description": "Express.js REST API with PostgreSQL/Supabase for SIH Indian Railways Maintenance Block Planning",
   "main": "src/server.js",
   "scripts": {
