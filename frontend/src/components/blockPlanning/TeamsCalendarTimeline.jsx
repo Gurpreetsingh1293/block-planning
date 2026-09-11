@@ -32,7 +32,8 @@ const DEPT_COLORS = {
 
 const DAYS_ABBREV = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-const API = import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? 'https://block-planning-backend.onrender.com' : 'http://localhost:5000');
+const rawApi = import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? 'https://block-planning-backend.onrender.com' : 'http://localhost:5000');
+const API = rawApi.replace(/\/+$/, '');
 
 // Returns 60 dates centred on refDate
 function getDateRange(refDate, n = 60) {

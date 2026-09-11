@@ -4,7 +4,8 @@
  */
 import { PASSENGER_TRAINS, FREIGHT_TRAINS } from '../data/trains';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? 'https://block-planning-backend.onrender.com' : '');
+const rawBase = import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? 'https://block-planning-backend.onrender.com' : '');
+const BASE_URL = rawBase.replace(/\/+$/, '');
 
 export async function getTrains(type = 'ALL') {
   try {

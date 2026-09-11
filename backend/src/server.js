@@ -60,6 +60,14 @@ io.on('connection', (socket) => {
 connectDB();
 
 // ─── Middleware ──────────────────────────────────────────────────────────────
+// Normalize URL path to prevent 404 on double slashes (e.g. //api/auth/login -> /api/auth/login)
+app.use((req, res, next) => {
+  if (req.url && req.url.startsWith('//')) {
+    req.url = req.url.replace(/^\/+/, '/');
+  }
+  next();
+});
+
 app.use(
   cors({
     origin: true,
