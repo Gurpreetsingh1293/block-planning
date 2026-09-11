@@ -3,7 +3,8 @@
  * Communicates with backend Groq API for AI optimization
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const rawBase = import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? 'https://block-planning-backend.onrender.com' : '');
+const API_BASE_URL = `${rawBase.replace(/\/+$/, '')}/api`;
 
 class AIService {
   /**
