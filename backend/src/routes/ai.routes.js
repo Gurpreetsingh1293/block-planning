@@ -14,18 +14,25 @@ const groqService = require('../services/groqService');
 router.post('/optimize-schedule', async (req, res) => {
   try {
     const {
-      maintenanceTasks,
-      passengerTrains,
-      goodsTrains,
-      corridorAvailability,
-      corridorInfo
+      maintenanceTasks = [],
+      passengerTrains = [],
+      goodsTrains = [],
+      corridorAvailability = [],
+      corridorInfo = {}
     } = req.body;
 
-    // Validate required data
-    if (!maintenanceTasks || !passengerTrains || !corridorAvailability) {
+    // Validate required data (simplified - only check if arrays exist)
+    if (!Array.isArray(maintenanceTasks) || maintenanceTasks.length === 0) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required data: maintenanceTasks, passengerTrains, or corridorAvailability'
+        error: 'Missing or empty maintenanceTasks array'
+      });
+    }
+
+    if (!Array.isArray(corridorAvailability) || corridorAvailability.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing or empty corridorAvailability array'
       });
     }
 
@@ -37,6 +44,8 @@ router.post('/optimize-schedule', async (req, res) => {
       });
     }
 
+    console.log(`[AI Route] Optimizing ${maintenanceTasks.length} tasks with ${passengerTrains.length} passenger trains...`);
+
     // Call Groq service for optimization
     const result = await groqService.optimizeBlockSchedule({
       maintenanceTasks,
@@ -46,6 +55,8 @@ router.post('/optimize-schedule', async (req, res) => {
       corridorInfo
     });
 
+    console.log(`[AI Route] Successfully optimized into ${result.optimizedBlocks?.length || 0} blocks`);
+
     res.json({
       success: true,
       data: result,
@@ -53,7 +64,7 @@ router.post('/optimize-schedule', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('AI optimization error:', error);
+    console.error('[AI Route] Optimization error:', error.message);
     res.status(500).json({
       success: false,
       error: error.message || 'AI optimization failed'
@@ -128,7 +139,7 @@ router.get('/status', (req, res) => {
     data: {
       aiServiceAvailable: available,
       provider: 'Groq',
-      model: 'openai/gpt-oss-20b',
+      model: 'openai/gpt-oss-120b',  // ✅ FIXED: Updated model name
       features: {
         scheduleOptimization: available,
         whatIfAnalysis: available,

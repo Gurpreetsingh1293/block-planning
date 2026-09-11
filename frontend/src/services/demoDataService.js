@@ -90,6 +90,50 @@ class DemoDataService {
   }
 
   /**
+   * Delete a maintenance task by taskId
+   */
+  deleteMaintenanceTask(taskId) {
+    try {
+      const tasks = this.getMaintenanceTasks();
+      const filteredTasks = tasks.filter(task => task.taskId !== taskId);
+      
+      if (filteredTasks.length === tasks.length) {
+        console.warn(`Task ${taskId} not found`);
+        return false;
+      }
+      
+      this.saveMaintenanceTasks(filteredTasks);
+      console.log(`Successfully deleted task ${taskId}`);
+      return true;
+    } catch (error) {
+      console.error('Error deleting maintenance task:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Update a maintenance task
+   */
+  updateMaintenanceTask(taskId, updates) {
+    try {
+      const tasks = this.getMaintenanceTasks();
+      const index = tasks.findIndex(t => t.taskId === taskId);
+      
+      if (index === -1) {
+        console.warn(`Task ${taskId} not found`);
+        return null;
+      }
+      
+      tasks[index] = { ...tasks[index], ...updates };
+      this.saveMaintenanceTasks(tasks);
+      return tasks[index];
+    } catch (error) {
+      console.error('Error updating maintenance task:', error);
+      return null;
+    }
+  }
+
+  /**
    * Get all block requests
    */
   getBlockRequests() {

@@ -85,6 +85,25 @@ export default function AIEngine() {
     setAlerts(newAlerts);
   };
 
+  const handleDeleteTask = (taskId) => {
+    if (!confirm(`Are you sure you want to delete task ${taskId}? This action cannot be undone.`)) {
+      return;
+    }
+
+    const success = demoDataService.deleteMaintenanceTask(taskId);
+    if (success) {
+      // Reload engine data
+      const data = demoDataService.getAIEngineData();
+      setEngineData(data);
+      generateAlerts(data.maintenanceTasks);
+      
+      // Show success message
+      alert(`✅ Task ${taskId} has been deleted successfully!`);
+    } else {
+      alert(`❌ Failed to delete task ${taskId}. Please try again.`);
+    }
+  };
+
   const findCompatibleTasks = (tasks) => {
     const compatible = [];
     for (let i = 0; i < tasks.length; i++) {
@@ -397,7 +416,7 @@ export default function AIEngine() {
           </h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {alerts.map((alert, index) => (
-              <AlertCard key={index} alert={alert} />
+              <AlertCard key={index} alert={alert} onDismiss={handleDeleteTask} />
             ))}
           </div>
         </motion.div>
@@ -509,7 +528,7 @@ function StatCard({ icon: Icon, label, value, color }) {
   );
 }
 
-function AlertCard({ alert }) {
+function AlertCard({ alert, onDismiss }) {
   const alertStyles = {
     CRITICAL: {
       bg: '#FFEBEE',
@@ -552,13 +571,35 @@ function AlertCard({ alert }) {
         borderRadius: '12px',
         display: 'flex',
         alignItems: 'center',
-        gap: '12px'
+        gap: '12px',
+        position: 'relative'
       }}
     >
       <Icon size={20} style={{ color: style.iconColor, flexShrink: 0 }} />
-      <span style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-primary)' }}>
+      <span style={{ fontSize: '14px', fontWeight: '500', color: 'var(--text-primary)', flex: 1 }}>
         {alert.message}
       </span>
+      {alert.taskId && onDismiss && (
+        <button
+          onClick={() => onDismiss(alert.taskId)}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            padding: '4px 8px',
+            cursor: 'pointer',
+            color: style.iconColor,
+            fontSize: '12px',
+            fontWeight: '600',
+            opacity: 0.7,
+            transition: 'opacity 0.2s'
+          }}
+          onMouseEnter={(e) => e.target.style.opacity = 1}
+          onMouseLeave={(e) => e.target.style.opacity = 0.7}
+          title={`Delete task ${alert.taskId}`}
+        >
+          ✕ Delete Task
+        </button>
+      )}
     </motion.div>
   );
 }

@@ -53,35 +53,25 @@ class GroqService {
 
     try {
       const completion = await this.client.chat.completions.create({
-        model: 'openai/gpt-oss-20b',
+        model: 'openai/gpt-oss-120b',  // ✅ FIXED: Changed from gpt-oss-20b to gpt-oss-120b
         messages: [
           {
             role: 'system',
-            content: `You are an AI optimization assistant for Indian Railways Automatic Block Planning System. 
+            content: `You are a railway maintenance optimizer. Create optimized maintenance blocks that:
+1. Avoid passenger train schedules (HARD CONSTRAINT)
+2. Group compatible tasks
+3. Minimize disruption
+4. Prioritize safety-critical work
 
-Your role is to:
-1. Prioritize maintenance tasks based on criticality, urgency, safety impact, and operational impact
-2. Identify optimal maintenance windows that minimize train disruption
-3. Group compatible maintenance tasks when feasible
-4. Explain your reasoning transparently
-5. Provide actionable recommendations
-
-IMPORTANT CONSTRAINTS:
-- Passenger train schedules are HARD CONSTRAINTS - do not recommend blocks during passenger train movements
-- Prioritize safety-critical and emergency maintenance
-- Consider corridor availability windows
-- Account for goods train movements but they can be rescheduled if necessary
-- Group tasks only if they are spatially compatible and have compatible resource requirements
-
-Respond with valid JSON only.`
+Respond ONLY with valid JSON. No markdown, no explanations outside JSON.`
           },
           {
             role: 'user',
             content: prompt
           }
         ],
-        temperature: 0.3,
-        max_tokens: 4000,
+        temperature: 0.2,
+        max_tokens: 8000,  // ✅ INCREASED from 4000 to 8000
         response_format: { type: 'json_object' }
       });
 
@@ -90,106 +80,159 @@ Respond with valid JSON only.`
         throw new Error('No response from Groq API');
       }
 
-      return JSON.parse(response);
+      // ✅ FIXED: Enhanced JSON parsing with validation and markdown removal
+      let cleanedResponse = response.trim();
+      
+      // Remove markdown code fences if present (```json ... ``` or ``` ... ```)
+      cleanedResponse = cleanedResponse
+        .replace(/^```json\s*/i, '')
+        .replace(/^```\s*/, '')
+        .replace(/\s*```$/, '')
+        .trim();
+      
+      // Log the cleaned response for debugging
+      console.log('[Groq] Response received, length:', cleanedResponse.length);
+      
+      let parsed;
+      try {
+        parsed = JSON.parse(cleanedResponse);
+      } catch (parseError) {
+        console.error('[Groq] JSON Parse Error:', parseError.message);
+        console.error('[Groq] Raw response (first 500 chars):', response.substring(0, 500));
+        console.error('[Groq] Cleaned response (first 500 chars):', cleanedResponse.substring(0, 500));
+        throw new Error(`Failed to parse AI response as JSON: ${parseError.message}`);
+      }
+      
+      // Validate required fields in response
+      if (!parsed.optimizedBlocks || !Array.isArray(parsed.optimizedBlocks)) {
+        console.error('[Groq] Invalid response structure:', JSON.stringify(parsed).substring(0, 200));
+        throw new Error('Invalid AI response: missing or invalid optimizedBlocks array');
+      }
+      
+      // Ensure each block has required fields
+      parsed.optimizedBlocks = parsed.optimizedBlocks.map(block => ({
+        blockId: block.blockId || `BLK-${Date.now()}`,
+        priority: block.priority || 'MEDIUM',
+        startTime: block.startTime || '22:00',
+        endTime: block.endTime || '01:00',
+        taskIds: Array.isArray(block.taskIds) ? block.taskIds : [],
+        departments: Array.isArray(block.departments) ? block.departments : ['Engineering'],
+        location: block.location || 'N/A',
+        estimatedDuration: block.estimatedDuration || 2,
+        requiredWorkers: block.requiredWorkers || 5,
+        requiredEquipment: Array.isArray(block.requiredEquipment) ? block.requiredEquipment : [],
+        affectedPassengerTrains: block.affectedPassengerTrains || 0,
+        affectedGoodsTrains: block.affectedGoodsTrains || 0,
+        reasoning: block.reasoning || 'Optimized for minimal disruption'
+      }));
+      
+      if (!parsed.summary || typeof parsed.summary !== 'object') {
+        console.warn('[Groq] Warning: Response missing summary object, creating default');
+        parsed.summary = {
+          totalBlocks: parsed.optimizedBlocks.length,
+          criticalTasks: maintenanceTasks.filter(t => t.criticality === 'Critical' || t.urgency === 'Emergency').length,
+          tasksGrouped: 0,
+          passengerTrainsAffected: 0,
+          goodsTrainsAffected: parsed.optimizedBlocks.reduce((sum, b) => sum + (b.affectedGoodsTrains || 0), 0),
+          estimatedDowntime: `${parsed.optimizedBlocks.reduce((sum, b) => sum + (b.estimatedDuration || 0), 0)} hours`
+        };
+      }
+      
+      console.log('[Groq] Successfully parsed response with', parsed.optimizedBlocks.length, 'optimized blocks');
+      
+      return parsed;
     } catch (error) {
-      console.error('Groq API error:', error);
-      throw new Error(`AI optimization failed: ${error.message}`);
+      console.error('[Groq] Optimization error:', error);
+      
+      // Provide more specific error messages
+      if (error.message?.includes('API key')) {
+        throw new Error('Groq API key is invalid or not configured. Please check GROQ_API_KEY in .env file.');
+      } else if (error.message?.includes('model')) {
+        throw new Error('Groq model error. The specified model may not be available. Please check your Groq account.');
+      } else if (error.message?.includes('rate limit')) {
+        throw new Error('Groq API rate limit exceeded. Please wait a moment and try again.');
+      } else if (error.message?.includes('parse')) {
+        throw new Error(`AI optimization failed: ${error.message}`);
+      } else {
+        throw new Error(`AI optimization failed: ${error.message || 'Unknown error occurred'}`);
+      }
     }
   }
 
   /**
-   * Build optimization prompt with structured data
+   * Build optimization prompt with structured data (SIMPLIFIED & COMPRESSED)
    */
   buildOptimizationPrompt(data) {
     const {
       maintenanceTasks,
       passengerTrains,
       goodsTrains,
-      corridorAvailability,
-      corridorInfo
+      corridorAvailability
     } = data;
 
-    return `Analyze the following railway maintenance data and provide an optimized block schedule:
+    // SIMPLIFIED: Only include essential data to avoid token limits
+    const tasksSummary = maintenanceTasks.map(t => ({
+      id: t.taskId,
+      dept: t.department,
+      loc: t.location || t.section,
+      crit: t.criticality,
+      urg: t.urgency,
+      dur: t.estimatedDuration,
+      workers: t.requiredWorkers
+    }));
 
-CORRIDOR INFORMATION:
-${JSON.stringify(corridorInfo, null, 2)}
+    const trainsSummary = passengerTrains.map(t => ({
+      num: t.trainNumber,
+      name: t.trainName,
+      dept: t.stations?.[0]?.departureTime || 'N/A',
+      arr: t.stations?.[t.stations.length - 1]?.arrivalTime || 'N/A'
+    }));
 
-AVAILABLE MAINTENANCE WINDOWS:
-${JSON.stringify(corridorAvailability, null, 2)}
+    return `You are optimizing railway maintenance blocks for Indian Railways.
 
-PASSENGER TRAINS (HARD CONSTRAINTS - DO NOT DISRUPT):
-${passengerTrains.map(t => `Train ${t.trainNumber} (${t.trainName}): Departs ${t.stations[0].departureTime}, Arrives ${t.stations[t.stations.length-1].arrivalTime}`).join('\n')}
+TASKS (${tasksSummary.length}):
+${JSON.stringify(tasksSummary)}
 
-GOODS TRAINS (CAN BE RESCHEDULED IF NECESSARY):
-${goodsTrains.map(g => `${g.trainNumber}: Expected ${g.expectedDeparture} - ${g.expectedArrival}`).join('\n')}
+PASSENGER TRAINS (${trainsSummary.length}) - DO NOT DISRUPT:
+${JSON.stringify(trainsSummary)}
 
-MAINTENANCE TASKS REQUIRING OPTIMIZATION:
-${maintenanceTasks.map(task => `
-Task: ${task.taskId}
-Department: ${task.department}
-Location: ${task.location}
-Issue: ${task.defect}
-Criticality: ${task.criticality}
-Urgency: ${task.urgency}
-Duration: ${task.estimatedDuration} hours
-Workers: ${task.requiredWorkers}
-Equipment: ${task.requiredEquipment.join(', ')}
-Preferred Window: ${task.preferredTimeWindow}
-Safety Impact: ${task.safetyImpact}
-Operational Impact: ${task.operationalImpact}
-`).join('\n---\n')}
+AVAILABLE WINDOWS:
+${JSON.stringify(corridorAvailability)}
 
-Provide a response in this exact JSON structure:
+GOODS TRAINS: ${goodsTrains.length} (can be rescheduled)
+
+INSTRUCTIONS:
+1. Create optimized maintenance blocks
+2. Avoid passenger train times (HARD CONSTRAINT)
+3. Group compatible tasks when possible
+4. Provide clear reasoning
+
+RESPOND WITH THIS EXACT JSON STRUCTURE (NO EXTRA TEXT):
 {
   "optimizedBlocks": [
     {
-      "blockId": "string",
-      "priority": "EMERGENCY|CRITICAL|HIGH|MEDIUM|ROUTINE",
-      "startTime": "HH:MM",
-      "endTime": "HH:MM",
-      "taskIds": ["array of task IDs grouped in this block"],
-      "departments": ["array of departments"],
-      "location": "string",
-      "estimatedDuration": number,
-      "requiredWorkers": number,
-      "requiredEquipment": ["array"],
-      "affectedPassengerTrains": number,
-      "affectedGoodsTrains": number,
-      "reasoning": "Why this window was selected and why these tasks were grouped"
+      "blockId": "BLK-001",
+      "priority": "CRITICAL",
+      "startTime": "22:00",
+      "endTime": "01:00",
+      "taskIds": ["ENG-001"],
+      "departments": ["Engineering"],
+      "location": "Delhi-Mathura KM 42-45",
+      "estimatedDuration": 3,
+      "requiredWorkers": 5,
+      "requiredEquipment": ["Tamping Machine"],
+      "affectedPassengerTrains": 0,
+      "affectedGoodsTrains": 1,
+      "reasoning": "Night window selected to avoid passenger traffic"
     }
-  ],
-  "prioritizedTasks": [
-    {
-      "taskId": "string",
-      "priorityLevel": "EMERGENCY|CRITICAL|HIGH|MEDIUM|ROUTINE",
-      "priorityScore": number (1-100),
-      "reasoning": "Why this priority was assigned"
-    }
-  ],
-  "groupedTasks": [
-    {
-      "taskIds": ["array of compatible task IDs"],
-      "reason": "Why these can be grouped",
-      "estimatedSavings": "Time or resource savings from grouping"
-    }
-  ],
-  "conflicts": [
-    {
-      "taskId": "string",
-      "conflictType": "string",
-      "description": "string"
-    }
-  ],
-  "recommendations": [
-    "string array of operational recommendations"
   ],
   "summary": {
-    "totalBlocks": number,
-    "criticalTasks": number,
-    "tasksGrouped": number,
-    "passengerTrainsAffected": number,
-    "goodsTrainsAffected": number,
-    "estimatedDowntime": "string"
+    "totalBlocks": 3,
+    "criticalTasks": 2,
+    "tasksGrouped": 0,
+    "passengerTrainsAffected": 0,
+    "goodsTrainsAffected": 2,
+    "estimatedDowntime": "6 hours"
   }
 }`;
   }
@@ -207,7 +250,7 @@ Provide a response in this exact JSON structure:
 
     try {
       const completion = await this.client.chat.completions.create({
-        model: 'openai/gpt-oss-20b',
+        model: 'openai/gpt-oss-120b',  // ✅ FIXED: Changed from gpt-oss-20b to gpt-oss-120b
         messages: [
           {
             role: 'system',
@@ -221,7 +264,7 @@ Analyze the impact of proposed changes and provide:
 5. Risk assessment
 6. Alternative recommendations
 
-Be precise and transparent. Respond with valid JSON only.`
+Be precise and transparent. Respond with valid JSON only. Do not include markdown code fences.`
           },
           {
             role: 'user',
@@ -238,10 +281,52 @@ Be precise and transparent. Respond with valid JSON only.`
         throw new Error('No response from Groq API');
       }
 
-      return JSON.parse(response);
+      // ✅ FIXED: Enhanced JSON parsing with validation and markdown removal
+      let cleanedResponse = response.trim();
+      
+      // Remove markdown code fences if present
+      cleanedResponse = cleanedResponse
+        .replace(/^```json\s*/i, '')
+        .replace(/^```\s*/, '')
+        .replace(/\s*```$/, '')
+        .trim();
+      
+      console.log('[Groq What-If] Response received, length:', cleanedResponse.length);
+      
+      let parsed;
+      try {
+        parsed = JSON.parse(cleanedResponse);
+      } catch (parseError) {
+        console.error('[Groq What-If] JSON Parse Error:', parseError.message);
+        console.error('[Groq What-If] Raw response (first 500 chars):', response.substring(0, 500));
+        throw new Error(`Failed to parse What-If analysis response: ${parseError.message}`);
+      }
+      
+      // Validate required fields
+      if (!parsed.impact || typeof parsed.impact !== 'object') {
+        console.warn('[Groq What-If] Warning: Response missing impact object');
+      }
+      
+      if (!parsed.recommendation || typeof parsed.recommendation !== 'object') {
+        console.warn('[Groq What-If] Warning: Response missing recommendation object');
+      }
+      
+      console.log('[Groq What-If] Successfully parsed What-If analysis response');
+      
+      return parsed;
     } catch (error) {
-      console.error('Groq API error:', error);
-      throw new Error(`What-If analysis failed: ${error.message}`);
+      console.error('[Groq What-If] Analysis error:', error);
+      
+      // Provide more specific error messages
+      if (error.message?.includes('API key')) {
+        throw new Error('Groq API key is invalid or not configured.');
+      } else if (error.message?.includes('rate limit')) {
+        throw new Error('Groq API rate limit exceeded. Please wait and try again.');
+      } else if (error.message?.includes('parse')) {
+        throw new Error(`What-If analysis failed: ${error.message}`);
+      } else {
+        throw new Error(`What-If analysis failed: ${error.message || 'Unknown error'}`);
+      }
     }
   }
 

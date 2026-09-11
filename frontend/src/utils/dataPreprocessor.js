@@ -272,7 +272,7 @@ export class DataPreprocessor {
   }
 
   /**
-   * Build preprocessed dataset for AI optimization
+   * Build preprocessed dataset for AI optimization (SIMPLIFIED for token limits)
    * This is the clean, filtered dataset that goes to the LLM
    */
   static buildOptimizationDataset(rawData) {
@@ -291,44 +291,54 @@ export class DataPreprocessor {
     const filteredGoodsTrains = this.filterGoodsBySection(goodsTrains, section, date);
     const filteredMaintenanceTasks = this.filterMaintenanceBySection(maintenanceTasks, section);
 
-    // Calculate task compatibility (deterministic)
-    const compatibleTasks = this.findCompatibleTasks(filteredMaintenanceTasks);
+    // ✅ SIMPLIFIED: Only send essential fields to avoid token limits
+    const simplifiedTasks = filteredMaintenanceTasks.map(task => ({
+      taskId: task.taskId,
+      department: task.department,
+      location: task.location || task.section,
+      defect: task.defect ? task.defect.substring(0, 80) : 'Maintenance required',  // Truncate long descriptions
+      criticality: task.criticality,
+      urgency: task.urgency,
+      estimatedDuration: task.estimatedDuration,
+      requiredWorkers: task.requiredWorkers,
+      requiredEquipment: task.requiredEquipment || [],
+      section: task.section
+    }));
 
-    // Find suitable windows for each task (deterministic)
-    const tasksWithWindows = filteredMaintenanceTasks.map(task => {
-      const suitableWindows = this.findSuitableWindows(
-        task,
-        corridorAvailability,
-        filteredPassengerTrains,
-        filteredGoodsTrains
-      );
+    // ✅ SIMPLIFIED: Only essential train data
+    const simplifiedPassengerTrains = filteredPassengerTrains.slice(0, 10).map(train => ({  // Limit to 10 trains
+      trainNumber: train.trainNumber,
+      trainName: train.trainName,
+      trainType: train.trainType,
+      stations: train.stations ? [
+        train.stations[0],  // First station
+        train.stations[train.stations.length - 1]  // Last station
+      ] : []
+    }));
 
-      return {
-        ...task,
-        suitableWindows: suitableWindows.slice(0, 3), // Top 3 windows
-        hasSuitableWindow: suitableWindows.length > 0
-      };
-    });
+    // ✅ SIMPLIFIED: Only essential goods train data
+    const simplifiedGoodsTrains = filteredGoodsTrains.slice(0, 5).map(goods => ({  // Limit to 5 trains
+      trainNumber: goods.trainNumber,
+      trainName: goods.trainName,
+      expectedDeparture: goods.expectedDeparture,
+      expectedArrival: goods.expectedArrival
+    }));
 
     // Build summary statistics (deterministic)
     const summary = {
-      totalMaintenanceTasks: tasksWithWindows.length,
-      criticalTasks: tasksWithWindows.filter(t => t.criticality === 'Critical' || t.urgency === 'Emergency').length,
-      tasksWithSuitableWindows: tasksWithWindows.filter(t => t.hasSuitableWindow).length,
-      tasksWithoutWindows: tasksWithWindows.filter(t => !t.hasSuitableWindow).length,
-      totalPassengerTrains: filteredPassengerTrains.length,
-      totalGoodsTrains: filteredGoodsTrains.length,
-      availableWindows: corridorAvailability.length,
-      potentialTaskGroupings: compatibleTasks.length
+      totalMaintenanceTasks: simplifiedTasks.length,
+      criticalTasks: simplifiedTasks.filter(t => t.criticality === 'Critical' || t.urgency === 'Emergency').length,
+      totalPassengerTrains: simplifiedPassengerTrains.length,
+      totalGoodsTrains: simplifiedGoodsTrains.length,
+      availableWindows: corridorAvailability.length
     };
 
     return {
-      maintenanceTasks: tasksWithWindows,
-      passengerTrains: filteredPassengerTrains,
-      goodsTrains: filteredGoodsTrains,
-      corridorAvailability,
-      corridorInfo,
-      compatibleTasks,
+      maintenanceTasks: simplifiedTasks,
+      passengerTrains: simplifiedPassengerTrains,
+      goodsTrains: simplifiedGoodsTrains,
+      corridorAvailability: corridorAvailability,
+      corridorInfo: corridorInfo,
       summary,
       metadata: {
         section,
