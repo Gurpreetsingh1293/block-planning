@@ -52,7 +52,14 @@ const DEPARTMENT_SPECS = {
   },
 };
 
-export default function DepartmentStandby({ user, onLogout, onPreviewST, onOpenGeneral }) {
+export default function DepartmentStandby({
+  user,
+  onLogout,
+  onPreviewST,
+  onPreviewEngineering,
+  onPreviewTraction,
+  onOpenGeneral,
+}) {
   const deptKey = (user?.department || 'engineering').toLowerCase();
   const spec = DEPARTMENT_SPECS[deptKey] || DEPARTMENT_SPECS.engineering;
 
@@ -102,11 +109,25 @@ export default function DepartmentStandby({ user, onLogout, onPreviewST, onOpenG
           <p className="standby-desc">
             {spec.description}
             <br />
-            Currently, the <strong>Signal & Telecommunication (S&T) Delhi-Mumbai Corridor</strong> dashboard has been completed and is fully operational. You can preview the live S&T operational console below, or explore the general planning console.
+            You can preview live operational consoles across departments below, or explore the general planning console.
           </p>
 
           {/* Quick Actions Bar */}
           <div className="standby-actions">
+            {onPreviewEngineering && (
+              <button className="btn-preview-eng" type="button" onClick={onPreviewEngineering}>
+                <span>🛠️</span>
+                <span>Preview Live Engineering Dashboard</span>
+              </button>
+            )}
+
+            {onPreviewTraction && (
+              <button className="btn-preview-trd" type="button" onClick={onPreviewTraction}>
+                <span>⚡</span>
+                <span>Preview Live Traction Dashboard</span>
+              </button>
+            )}
+
             <button className="btn-preview-st" type="button" onClick={onPreviewST}>
               <span>🚦</span>
               <span>Preview Live S&T Dashboard</span>

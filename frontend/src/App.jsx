@@ -8,6 +8,8 @@ import ComingSoon from "./pages/ComingSoon";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import STDashboard from "./pages/STDashboard";
+import EngineeringDashboard from "./pages/EngineeringDashboard";
+import TractionDashboard from "./pages/TractionDashboard";
 import DepartmentStandby from "./pages/DepartmentStandby";
 import { getStoredUser, logoutUser } from "./api/client";
 
@@ -15,6 +17,8 @@ function App() {
   // Check localStorage for active session so page refresh persists authentication
   const [currentUser, setCurrentUser] = useState(() => getStoredUser());
   const [previewingST, setPreviewingST] = useState(false);
+  const [previewingEngineering, setPreviewingEngineering] = useState(false);
+  const [previewingTraction, setPreviewingTraction] = useState(false);
   const [browsingGeneral, setBrowsingGeneral] = useState(false);
 
   const handleLogin = (userData) => {
@@ -25,6 +29,8 @@ function App() {
 
     setCurrentUser(user);
     setPreviewingST(false);
+    setPreviewingEngineering(false);
+    setPreviewingTraction(false);
     setBrowsingGeneral(false);
   };
 
@@ -32,6 +38,8 @@ function App() {
     logoutUser();
     setCurrentUser(null);
     setPreviewingST(false);
+    setPreviewingEngineering(false);
+    setPreviewingTraction(false);
     setBrowsingGeneral(false);
   };
 
@@ -84,7 +92,95 @@ function App() {
     );
   }
 
-  // 3. If browsing General Console (Live Tracking, Block Planning, System Diagnostics)
+  // 3. Engineering Dashboard
+  if (previewingEngineering) {
+    return (
+      <div>
+        <div
+          style={{
+            background: "#0b2545",
+            color: "#fff",
+            padding: "6px 20px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            fontSize: "12px",
+            borderBottom: "1px solid rgba(255,255,255,0.2)",
+          }}
+        >
+          <span>
+            ℹ️ <strong>Preview Mode:</strong> Viewing Engineering (Civil / Track P-Way) Operations (Logged in as {currentUser.name || currentUser.userId})
+          </span>
+          <button
+            type="button"
+            onClick={() => setPreviewingEngineering(false)}
+            style={{
+              background: "#0284c7",
+              color: "#fff",
+              border: "none",
+              borderRadius: "4px",
+              padding: "3px 10px",
+              cursor: "pointer",
+              fontWeight: 600,
+            }}
+          >
+            Return to Department Portal
+          </button>
+        </div>
+        <EngineeringDashboard
+          user={currentUser}
+          onLogout={handleLogout}
+          onReturn={() => setPreviewingEngineering(false)}
+        />
+      </div>
+    );
+  }
+
+  // 4. Traction Dashboard
+  if (previewingTraction) {
+    return (
+      <div>
+        <div
+          style={{
+            background: "#0b2545",
+            color: "#fff",
+            padding: "6px 20px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            fontSize: "12px",
+            borderBottom: "1px solid rgba(255,255,255,0.2)",
+          }}
+        >
+          <span>
+            ℹ️ <strong>Preview Mode:</strong> Viewing Traction Distribution (TRD / OHE) Operations (Logged in as {currentUser.name || currentUser.userId})
+          </span>
+          <button
+            type="button"
+            onClick={() => setPreviewingTraction(false)}
+            style={{
+              background: "#d97706",
+              color: "#fff",
+              border: "none",
+              borderRadius: "4px",
+              padding: "3px 10px",
+              cursor: "pointer",
+              fontWeight: 600,
+            }}
+          >
+            Return to Department Portal
+          </button>
+        </div>
+        <TractionDashboard
+          user={currentUser}
+          onLogout={handleLogout}
+          onReturn={() => setPreviewingTraction(false)}
+        />
+      </div>
+    );
+  }
+
+  // 5. If browsing General Console (Live Tracking, Block Planning, System Diagnostics)
   if (browsingGeneral) {
     return (
       <BrowserRouter>
@@ -150,13 +246,14 @@ function App() {
     );
   }
 
-  // 4. Other Roles (Engineering & Traction): Show dedicated Standby Portal
-  // (Pages for these roles are under active development by teammates)
+  // 6. Department Standby Portal (with options to preview Engineering, Traction, S&T, and General Block Console)
   return (
     <DepartmentStandby
       user={currentUser}
       onLogout={handleLogout}
       onPreviewST={() => setPreviewingST(true)}
+      onPreviewEngineering={() => setPreviewingEngineering(true)}
+      onPreviewTraction={() => setPreviewingTraction(true)}
       onOpenGeneral={() => setBrowsingGeneral(true)}
     />
   );

@@ -198,6 +198,44 @@
   margin-bottom: 32px;
 }
 
+.btn-preview-eng {
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.15s ease;
+}
+
+.btn-preview-eng:hover {
+  background: #0369a1;
+}
+
+.btn-preview-trd {
+  background: #d97706;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.15s ease;
+}
+
+.btn-preview-trd:hover {
+  background: #b45309;
+}
+
 .btn-preview-st {
   background: #0b2545;
   color: #ffffff;
