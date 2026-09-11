@@ -2,7 +2,7 @@
  * API Client for SIH Block Planning Backend
  */
 const rawBase = import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? 'https://block-planning-backend.onrender.com' : '');
-const BASE_URL = rawBase.replace(/\/+$/, '');
+const BASE_URL = rawBase.replace(/\/+$/, '').replace(/\/api$/, '');
 
 /**
  * Performs a health check request to GET /api/health
