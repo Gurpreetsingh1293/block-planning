@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import BlockTooltip from './BlockTooltip';
 import BookingModal from './BookingModal';
+import BlockRequestModal from './BlockRequestModal';
 import {
   parseTimeToMinutes,
   formatDisplayTime,
@@ -495,6 +496,7 @@ export default function TeamsCalendarTimeline() {
   const [booking, setBooking]         = useState(null);
   const [delBlock, setDelBlock]       = useState(null);
   const [showCreate, setShowCreate]   = useState(false);
+  const [showRequestModal, setShowRequestModal] = useState(false);
   const [toasts, setToasts]           = useState([]);
 
   const scrollRef = useRef(null);
@@ -628,12 +630,18 @@ export default function TeamsCalendarTimeline() {
           {/* Admin / JE toggle — with slide knob */}
           <ModeToggle isAdmin={isAdmin} onToggle={()=>setIsAdmin(v=>!v)} />
 
-          {/* Create Block — only in admin mode */}
-          {isAdmin && (
+          {/* Create Block (Admin) or Request Block (JE/Officer) */}
+          {isAdmin ? (
             <motion.button type="button" whileHover={{scale:1.02,y:-1}} whileTap={{scale:.97}}
               onClick={()=>setShowCreate(true)}
               style={{ background:`linear-gradient(135deg,${NAVY},${BLUE_M})`, color:'#fff', border:'none', borderRadius:9, padding:'8px 16px', fontSize:12, fontWeight:700, cursor:'pointer', display:'flex', alignItems:'center', gap:6, boxShadow:'0 3px 10px rgba(37,99,235,.3)' }}>
               ＋ Create Block
+            </motion.button>
+          ) : (
+            <motion.button type="button" whileHover={{scale:1.02,y:-1}} whileTap={{scale:.97}}
+              onClick={()=>setShowRequestModal(true)}
+              style={{ background:'#16803C', color:'#fff', border:'none', borderRadius:9, padding:'8px 16px', fontSize:12, fontWeight:700, cursor:'pointer', display:'flex', alignItems:'center', gap:6, boxShadow:'0 3px 10px rgba(22,128,60,.3)' }}>
+              📋 Request Block
             </motion.button>
           )}
         </div>
@@ -762,6 +770,16 @@ export default function TeamsCalendarTimeline() {
       {booking    && <BookingModal block={booking} onClose={()=>setBooking(null)} onBook={handleBook} />}
       {delBlock   && <DeleteModal block={delBlock} onConfirm={handleDelete} onCancel={()=>setDelBlock(null)} />}
       {showCreate && <CreateSlotModal weekDates={weekDates} onClose={()=>setShowCreate(false)} onCreated={b=>{ setBlocks(p=>[...p,b]); toast('🟢 Slot created','create'); }} />}
+      {showRequestModal && (
+        <BlockRequestModal
+          isOpen={showRequestModal}
+          onClose={()=>setShowRequestModal(false)}
+          onSuccess={b=>{
+            fetchBlocks();
+            toast(`📋 Block request submitted for ${b.department || 'Maintenance'}`,'create');
+          }}
+        />
+      )}
     </div>
   );
 }

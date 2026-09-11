@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, AlertCircle, CheckCircle } from 'lucide-react';
+import { X, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
 import demoDataService from '../../services/demoDataService';
 import DataPreprocessor from '../../utils/dataPreprocessor';
 
@@ -25,6 +25,7 @@ export default function BlockRequestModal({ isOpen, onClose, onSuccess }) {
 
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
 
   const departments = [
     'Engineering',
@@ -127,6 +128,7 @@ export default function BlockRequestModal({ isOpen, onClose, onSuccess }) {
     }
 
     setSubmitting(true);
+    setSubmitSuccess(false);
 
     try {
       // Parse equipment string into array
@@ -134,6 +136,8 @@ export default function BlockRequestModal({ isOpen, onClose, onSuccess }) {
         .split(',')
         .map(item => item.trim())
         .filter(item => item.length > 0);
+
+      const durationHours = parseFloat(formData.estimatedDuration) || 1;
 
       // Create block request
       const blockRequest = {
@@ -148,23 +152,23 @@ export default function BlockRequestModal({ isOpen, onClose, onSuccess }) {
         urgency: formData.urgency,
         startTime: formData.startTime,
         endTime: formData.endTime,
-        duration: parseFloat(formData.estimatedDuration),
+        duration: durationHours,
         date: formData.preferredDate,
-        requiredWorkers: parseInt(formData.requiredWorkers),
+        requiredWorkers: parseInt(formData.requiredWorkers) || 1,
         requiredEquipment: equipment.length > 0 ? equipment : ['Standard Tools'],
         affectedPassengerTrains: 0, // Will be calculated by AI
         affectedGoodsTrains: 0,
         riskLevel: formData.criticality === 'Critical' || formData.urgency === 'Emergency' ? 'High' : 'Medium'
       };
 
-      // Save to demo data service (localStorage persistence)
+      // 1. Save to demo data service (localStorage persistence)
       const savedBlock = demoDataService.addBlockRequest(blockRequest);
 
-      // Also add as maintenance task for AI Engine
+      // 2. Also add as maintenance task for AI Engine
       const maintenanceTask = {
         department: formData.department,
-        assetId: 'PENDING',
-        assetType: 'General',
+        assetId: `AST-${Date.now().toString().slice(-4)}`,
+        assetType: 'Track & Signal',
         location: formData.location,
         corridor: formData.corridor,
         section: formData.section,
@@ -172,8 +176,8 @@ export default function BlockRequestModal({ isOpen, onClose, onSuccess }) {
         criticality: formData.criticality,
         urgency: formData.urgency,
         dueDate: formData.preferredDate,
-        estimatedDuration: parseFloat(formData.estimatedDuration),
-        requiredWorkers: parseInt(formData.requiredWorkers),
+        estimatedDuration: durationHours,
+        requiredWorkers: parseInt(formData.requiredWorkers) || 1,
         requiredEquipment: equipment.length > 0 ? equipment : ['Standard Tools'],
         blockRequired: true,
         status: 'Pending',
@@ -185,14 +189,46 @@ export default function BlockRequestModal({ isOpen, onClose, onSuccess }) {
 
       demoDataService.addMaintenanceTask(maintenanceTask);
 
-      // Show success message
+      // 3. Save to backend database (/api/blocks) so it syncs with Block Planning calendar & real-time sockets
+      try {
+        const rawApi = import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? 'https://block-planning-backend.onrender.com' : 'http://localhost:5000');
+        const API = rawApi.replace(/\/+$/, '');
+        await fetch(`${API}/api/blocks`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: formData.issue,
+            department: formData.department,
+            location: formData.location,
+            section: formData.section,
+            issue: formData.issue,
+            criticality: formData.criticality,
+            urgency: formData.urgency,
+            startTime: formData.startTime,
+            endTime: formData.endTime,
+            duration: durationHours,
+            date: formData.preferredDate,
+            requiredWorkers: parseInt(formData.requiredWorkers) || 1,
+            requiredEquipment: equipment.length > 0 ? equipment : ['Standard Tools']
+          })
+        });
+      } catch (apiErr) {
+        console.warn('[BlockRequestModal] Backend sync notice:', apiErr.message);
+      }
+
+      // 4. Update UI to success state
+      setSubmitting(false);
+      setSubmitSuccess(true);
+
+      // 5. Notify parent component
       if (onSuccess) {
         onSuccess(savedBlock);
       }
 
-      // Close modal
+      // 6. Close modal after user sees confirmation
       setTimeout(() => {
         onClose();
+        setSubmitSuccess(false);
         // Reset form
         setFormData({
           department: '',
@@ -215,9 +251,8 @@ export default function BlockRequestModal({ isOpen, onClose, onSuccess }) {
 
     } catch (error) {
       console.error('Error submitting block request:', error);
-      alert('Failed to submit block request. Please try again.');
-    } finally {
       setSubmitting(false);
+      alert('Failed to submit block request. Please try again.');
     }
   };
 
@@ -438,19 +473,25 @@ export default function BlockRequestModal({ isOpen, onClose, onSuccess }) {
               )}
 
               {/* Success Message */}
-              {submitting && (
+              {submitSuccess && (
                 <div style={{
                   padding: '12px 16px',
                   background: '#E8F5E9',
-                  border: '1px solid #A5D6A7',
+                  border: '1.5px solid #2E7D32',
                   borderRadius: '8px',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '10px'
+                  gap: '12px',
+                  boxShadow: '0 2px 8px rgba(46, 125, 50, 0.15)'
                 }}>
-                  <CheckCircle size={18} style={{ color: '#2E7D32' }} />
-                  <div style={{ fontSize: '14px', color: 'var(--text-primary)', fontWeight: '600' }}>
-                    Block request submitted successfully!
+                  <CheckCircle size={22} style={{ color: '#2E7D32', flexShrink: 0 }} />
+                  <div>
+                    <div style={{ fontSize: '14px', color: '#1B5E20', fontWeight: '700' }}>
+                      Block request submitted successfully!
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#2E7D32' }}>
+                      Saved to Active Maintenance Demand and scheduled on the timeline.
+                    </div>
                   </div>
                 </div>
               )}
@@ -460,7 +501,7 @@ export default function BlockRequestModal({ isOpen, onClose, onSuccess }) {
                 <button
                   type="button"
                   onClick={onClose}
-                  disabled={submitting}
+                  disabled={submitting || submitSuccess}
                   style={{
                     flex: 1,
                     padding: '12px 24px',
@@ -469,28 +510,44 @@ export default function BlockRequestModal({ isOpen, onClose, onSuccess }) {
                     border: '1px solid var(--border-medium)',
                     borderRadius: '8px',
                     fontWeight: '600',
-                    cursor: submitting ? 'not-allowed' : 'pointer',
-                    opacity: submitting ? 0.5 : 1
+                    cursor: submitting || submitSuccess ? 'not-allowed' : 'pointer',
+                    opacity: submitting || submitSuccess ? 0.5 : 1
                   }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  disabled={submitting}
+                  disabled={submitting || submitSuccess}
                   style={{
                     flex: 2,
                     padding: '12px 24px',
-                    background: submitting ? '#9CA3AF' : 'var(--railway-blue)',
+                    background: submitSuccess ? '#16803C' : submitting ? '#9CA3AF' : 'var(--railway-blue)',
                     color: '#fff',
                     border: 'none',
                     borderRadius: '8px',
                     fontWeight: '600',
-                    cursor: submitting ? 'not-allowed' : 'pointer',
-                    transition: 'background 0.2s'
+                    cursor: submitting || submitSuccess ? 'not-allowed' : 'pointer',
+                    transition: 'background 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px'
                   }}
                 >
-                  {submitting ? 'Submitting...' : 'Submit Block Request'}
+                  {submitSuccess ? (
+                    <>
+                      <CheckCircle size={18} />
+                      Saved Successfully!
+                    </>
+                  ) : submitting ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      Saving Request...
+                    </>
+                  ) : (
+                    'Submit Block Request'
+                  )}
                 </button>
               </div>
             </div>

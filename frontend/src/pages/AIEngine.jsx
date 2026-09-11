@@ -10,10 +10,14 @@ import {
   Zap,
   Activity,
   Calendar,
-  Train,
-  Loader2,
-  FileText,
-  Plus
+  Train, 
+  Loader2, 
+  FileText, 
+  Plus,
+  X,
+  Trash2,
+  Wrench,
+  MapPin
 } from 'lucide-react';
 import demoDataService from '../services/demoDataService';
 import aiService from '../services/aiService';
@@ -31,6 +35,8 @@ export default function AIEngine() {
   const [processingStage, setProcessingStage] = useState('');
   const [alerts, setAlerts] = useState([]);
   const [showRequestModal, setShowRequestModal] = useState(false);
+  const [savedBanner, setSavedBanner] = useState(null);
+  const [showTasksSection, setShowTasksSection] = useState(true);
 
   useEffect(() => {
     initializeAIEngine();
@@ -57,6 +63,14 @@ export default function AIEngine() {
     
     // Clear optimization data so user can re-run with new request
     setOptimizationData(null);
+
+    setSavedBanner({
+      id: Date.now(),
+      department: newBlock?.department || 'Department',
+      blockId: newBlock?.blockId || newBlock?.taskId || 'NEW',
+      issue: newBlock?.issue || newBlock?.defect || 'Maintenance Block',
+      time: newBlock?.startTime && newBlock?.endTime ? `${newBlock.startTime} - ${newBlock.endTime}` : ''
+    });
   };
 
   const generateAlerts = (tasks) => {
@@ -326,6 +340,67 @@ export default function AIEngine() {
         </div>
       </motion.div>
 
+      {/* Success Notification Banner */}
+      <AnimatePresence>
+        {savedBanner && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            style={{
+              marginBottom: '24px',
+              padding: '16px 20px',
+              background: '#ECFDF5',
+              border: '1.5px solid #10B981',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              boxShadow: '0 4px 12px rgba(16, 185, 129, 0.15)'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <div style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                background: '#D1FAE5',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                <CheckCircle size={22} color="#059669" />
+              </div>
+              <div>
+                <div style={{ fontWeight: '700', color: '#065F46', fontSize: '15px', marginBottom: '2px' }}>
+                  Block Request Registered Successfully! ({savedBanner.blockId})
+                </div>
+                <div style={{ fontSize: '13px', color: '#047857' }}>
+                  <strong>{savedBanner.department}</strong>: {savedBanner.issue} {savedBanner.time && `(${savedBanner.time})`} — saved to Active Maintenance Demand and Block Planning schedule. Click "Run Optimization" to integrate.
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => setSavedBanner(null)}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                color: '#059669',
+                padding: '6px',
+                borderRadius: '6px',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+              title="Dismiss notification"
+            >
+              <X size={18} />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Processing Stage */}
       <AnimatePresence>
         {loading && processingStage && (
@@ -421,6 +496,178 @@ export default function AIEngine() {
           </div>
         </motion.div>
       )}
+
+      {/* Active Maintenance Demand Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.25 }}
+        style={{ marginBottom: '32px' }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: '700', margin: 0, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Wrench size={20} style={{ color: 'var(--railway-blue)' }} />
+            Active Maintenance Demand & Block Requests ({engineData.maintenanceTasks.length})
+          </h2>
+          <button
+            onClick={() => setShowTasksSection(v => !v)}
+            style={{
+              background: 'transparent',
+              border: '1px solid var(--border-medium)',
+              borderRadius: '6px',
+              padding: '6px 12px',
+              fontSize: '12px',
+              fontWeight: '600',
+              color: 'var(--text-secondary)',
+              cursor: 'pointer'
+            }}
+          >
+            {showTasksSection ? 'Collapse' : 'Expand'}
+          </button>
+        </div>
+
+        {showTasksSection && (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+            gap: '16px'
+          }}>
+            {engineData.maintenanceTasks.map((task, idx) => {
+              const isNewlyAdded = savedBanner && (savedBanner.blockId === task.taskId || savedBanner.issue === task.defect);
+              const deptColors = {
+                'Civil': { bg: '#FEF3C7', border: '#F59E0B', text: '#B45309' },
+                'Engineering': { bg: '#FEF3C7', border: '#F59E0B', text: '#B45309' },
+                'Signal & Telecommunication': { bg: '#F3E8FF', border: '#A855F7', text: '#7E22CE' },
+                'Signal & Telecom': { bg: '#F3E8FF', border: '#A855F7', text: '#7E22CE' },
+                'Signal': { bg: '#F3E8FF', border: '#A855F7', text: '#7E22CE' },
+                'Traction/OHE': { bg: '#FFE4E6', border: '#F43F5E', text: '#BE123C' },
+                'Electrical': { bg: '#FFE4E6', border: '#F43F5E', text: '#BE123C' },
+                'Mechanical': { bg: '#F1F5F9', border: '#94A3B8', text: '#475569' }
+              };
+              const dStyle = deptColors[task.department] || { bg: '#E0F2FE', border: '#38BDF8', text: '#0369A1' };
+              const critColor = task.criticality === 'Critical' || task.urgency === 'Emergency' ? '#DC2626' : task.criticality === 'High' ? '#EA580C' : '#0284C7';
+
+              return (
+                <motion.div
+                  key={task.taskId || idx}
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  style={{
+                    background: isNewlyAdded ? '#F0FDF4' : 'var(--bg-card)',
+                    border: isNewlyAdded ? '2px solid #10B981' : '1px solid var(--border-subtle)',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    boxShadow: isNewlyAdded ? '0 4px 14px rgba(16, 185, 129, 0.2)' : 'var(--shadow-sm)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    position: 'relative'
+                  }}
+                >
+                  <div>
+                    {/* Card Top Row */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontWeight: '700', fontSize: '13px', color: 'var(--text-primary)' }}>
+                          {task.taskId}
+                        </span>
+                        {isNewlyAdded && (
+                          <span style={{ background: '#10B981', color: '#fff', fontSize: '10px', fontWeight: '700', padding: '2px 6px', borderRadius: '4px' }}>
+                            NEW
+                          </span>
+                        )}
+                        <span style={{
+                          background: dStyle.bg,
+                          color: dStyle.text,
+                          border: `1px solid ${dStyle.border}`,
+                          fontSize: '11px',
+                          fontWeight: '600',
+                          padding: '2px 8px',
+                          borderRadius: '10px'
+                        }}>
+                          {task.department}
+                        </span>
+                      </div>
+                      <span style={{
+                        fontSize: '11px',
+                        fontWeight: '700',
+                        color: critColor,
+                        textTransform: 'uppercase'
+                      }}>
+                        {task.criticality}
+                      </span>
+                    </div>
+
+                    {/* Defect / Problem description */}
+                    <div style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '8px', lineHeight: '1.4' }}>
+                      {task.defect}
+                    </div>
+
+                    {/* Meta info */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '12px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <MapPin size={13} style={{ color: 'var(--text-secondary)', flexShrink: 0 }} />
+                        <span>{task.location}</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Clock size={13} style={{ color: 'var(--text-secondary)', flexShrink: 0 }} />
+                        <span>{task.preferredTimeWindow || `${task.startTime || '09:00'}-${task.endTime || '11:00'}`} ({task.estimatedDuration} hrs)</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Users size={13} style={{ color: 'var(--text-secondary)', flexShrink: 0 }} />
+                        <span>{task.requiredWorkers || 2} workers · {Array.isArray(task.requiredEquipment) ? task.requiredEquipment.join(', ') : 'Standard Tools'}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Footer with status and delete button */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    borderTop: '1px solid var(--border-subtle)',
+                    paddingTop: '10px',
+                    marginTop: 'auto'
+                  }}>
+                    <span style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      fontSize: '11px',
+                      fontWeight: '600',
+                      color: '#0284C7',
+                      background: '#E0F2FE',
+                      padding: '2px 8px',
+                      borderRadius: '6px'
+                    }}>
+                      <Clock size={11} /> {task.status || 'Pending'}
+                    </span>
+                    <button
+                      onClick={() => handleDeleteTask(task.taskId)}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: '#EF4444',
+                        cursor: 'pointer',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        padding: '3px 6px',
+                        borderRadius: '4px'
+                      }}
+                      title={`Remove task ${task.taskId}`}
+                    >
+                      <Trash2 size={12} /> Remove
+                    </button>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
+      </motion.div>
 
       {/* Timeline Visualization */}
       <motion.div

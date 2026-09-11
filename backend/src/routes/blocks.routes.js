@@ -6,6 +6,7 @@ const {
   createAvailableSlot,
   deleteBlock,
   resetSchedule,
+  createBlock,
 } = require('../controllers/blocks.controller');
 
 // Middleware to inject Socket.io into request handlers
@@ -20,6 +21,14 @@ const withIo = (handler) => (req, res) => {
  * Auto-seeds 7 initial blocks if collection is empty
  */
 router.get('/', withIo(getAllBlocks));
+
+/**
+ * POST /api/blocks
+ * POST /api/blocks/request
+ * Create a new maintenance block or submit a block request
+ */
+router.post('/', withIo(createBlock));
+router.post('/request', withIo(createBlock));
 
 /**
  * POST /api/blocks/available
