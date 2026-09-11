@@ -8,6 +8,7 @@ const { Server } = require('socket.io');
 const connectDB = require('./config/db');
 const apiRoutes = require('./routes');
 const blocksRoutes = require('./routes/blocks.routes');
+const trainRoutes = require('./routes/trainRoutes');
 
 const app = express();
 const server = http.createServer(app);
@@ -87,6 +88,9 @@ app.get('/', (req, res) => {
 
 // Blocks API (new mission-spec routes)
 app.use('/api/blocks', blocksRoutes);
+
+// Train Telemetry & Live Tracking Routes (RailRadar Provider)
+app.use('/api/trains', trainRoutes);
 
 // Legacy API Routes
 app.use('/api', apiRoutes);
