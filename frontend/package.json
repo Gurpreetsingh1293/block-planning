@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
+    "firebase": "^11.10.0",
     "framer-motion": "^13.2.0",
     "jspdf": "^4.2.1",
     "lucide-react": "^0.395.0",

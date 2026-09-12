@@ -131,9 +131,11 @@ function STOperationsContent({ user, onLogout }) {
         <div className="st-navbar-actions">
           <div className="st-navbar-profile">
             <span className="st-navbar-profile-dept">
-              {user?.department ? user.department.toUpperCase() : "S&T"}
+              {user?.roleInfo?.role || (user?.department ? user.department.toUpperCase() : "S&T Officer")}
             </span>
-            <span className="st-navbar-profile-id">{user?.userId || "SNT001"}</span>
+            <span className="st-navbar-profile-id">
+              {user?.displayName || user?.name || user?.userId || user?.email || "SNT001"}
+            </span>
           </div>
           {onLogout ? (
             <button

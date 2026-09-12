@@ -29,10 +29,10 @@ export default function MainLayout({ children, user, onLogout }) {
               color: '#374151'
             }}>
               <span style={{ fontWeight: '600' }}>
-                {user.department ? user.department.toUpperCase() : 'User'}
+                {user?.roleInfo?.role || (user?.department ? user.department.toUpperCase() : 'User')}
               </span>
               <span style={{ color: '#9ca3af' }}>•</span>
-              <span>{user.userId || user.name || 'Officer'}</span>
+              <span>{user?.displayName || user?.name || user?.userId || user?.email || 'Officer'}</span>
             </div>
             <button
               onClick={onLogout}

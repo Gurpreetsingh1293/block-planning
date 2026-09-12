@@ -2,6 +2,9 @@ import { useState } from "react";
 import "./Login.css";
 import vandeBharatImage from "../assets/images/vande-bharat.jpg";
 import { loginUser } from "../api/client";
+import { signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "../firebase";
+import { useAuth } from "../context/AuthContext";
 
 const DEPARTMENTS = [
   {
@@ -42,7 +45,8 @@ const DEMO_OFFICER_PRESETS = [
   },
 ];
 
-export default function Login({ onLogin }) {
+export default function Login() {
+  const { setLegacySession } = useAuth();
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [department, setDepartment] = useState("");
@@ -58,14 +62,33 @@ export default function Login({ onLogin }) {
     setSuccess(null);
   }
 
-  function handleGoogleLogin() {
-    console.log(
-      "[RBP Auth] Google OAuth clicked - reserved for future implementation."
-    );
+  async function handleGoogleLogin() {
+    setError("");
 
-    setError(
-      "Google authentication will be connected in a future update. Please sign in with your Railway User ID."
-    );
+    // Guard: Firebase not initialised (missing env vars — restart dev server).
+    if (!auth || !googleProvider) {
+      setError(
+        "Google Sign-In is not configured. Please restart the dev server after filling in frontend/.env with your Firebase keys."
+      );
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // signInWithPopup updates Firebase auth state; onAuthStateChanged in
+      // AuthContext picks it up automatically and navigates away from Login.
+      await signInWithPopup(auth, googleProvider);
+    } catch (err) {
+      console.error("[RBP Auth] Google sign-in error:", err);
+      // auth/popup-closed-by-user is not really an error worth showing.
+      if (err.code !== "auth/popup-closed-by-user") {
+        setError(
+          err.message || "Google sign-in failed. Please try again."
+        );
+      }
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   async function handleLogin(e) {
@@ -114,8 +137,8 @@ export default function Login({ onLogin }) {
       const loggedInDepartment =
         result?.user?.department?.toLowerCase() || department.toLowerCase();
 
-      if (onLogin) {
-        onLogin({
+      if (setLegacySession) {
+        setLegacySession({
           ...(result?.user || {}),
           department: loggedInDepartment,
         });

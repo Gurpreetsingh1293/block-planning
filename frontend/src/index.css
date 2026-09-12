@@ -154,40 +154,20 @@ a {
    ========================================================================== */
 .sidebar-logo-container {
   display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.65rem;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid var(--border-subtle);
   margin-bottom: 1.5rem;
 }
 
-/* Dedicated Custom Logo Placeholder */
-.custom-logo-placeholder {
-  width: 100%;
-}
-
-.logo-placeholder-frame {
-  height: 52px;
-  background: #F8FAFC;
-  border: 1.5px dashed var(--border-prominent);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.custom-logo-placeholder:hover .logo-placeholder-frame {
-  border-color: var(--railway-blue);
-  background: var(--railway-blue-light);
-}
-
-.logo-placeholder-text {
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: var(--text-secondary);
-  font-family: var(--font-mono);
+/* Compact train logo icon */
+.sidebar-train-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 /* Sidebar Brand Typography */

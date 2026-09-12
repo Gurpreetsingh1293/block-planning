@@ -40,15 +40,9 @@ export default function Sidebar() {
 
   return (
     <aside className="app-sidebar">
-      {/* 1. Custom Logo Placeholder Area */}
+      {/* 1. Logo + Brand Row */}
       <div className="sidebar-logo-container">
-        <div className="custom-logo-placeholder" title="Custom Logo Area (Swap with PNG/SVG/WebP)">
-          <div className="logo-placeholder-frame">
-            <span className="logo-placeholder-text">[ LOGO PLACEHOLDER ]</span>
-          </div>
-        </div>
-
-        {/* 2. Product Branding */}
+        <img src="/train-logo.png" alt="Rail Operations Logo" className="sidebar-train-logo" />
         <div className="sidebar-brand-text">
           <h1 className="brand-product-name">BLOCK PLANNER</h1>
           <p className="brand-railways-tag">Indian Railways</p>
